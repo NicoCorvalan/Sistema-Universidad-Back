@@ -1,4 +1,4 @@
-package sistema_universidad.universidad.entity;
+package sistema_universidad.universidad.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
