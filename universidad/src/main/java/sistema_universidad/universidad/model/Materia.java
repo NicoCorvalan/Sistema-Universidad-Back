@@ -17,6 +17,23 @@ import lombok.ToString;
 @Table(name = "materias")
 public class Materia {
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "nombre")
+    private String nombre;
+
+    @ManyToOne
+    @JoinColumn(name = "carrera_id", nullable = false)
+    private Carrera carrera;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "duracion")
+    private Duracion duracion;
+
+    @Column(name = "horas_cursado")
+    private int horas_cursado;
+
+    public enum Duracion {anual, cuatrimestral}
+    
 }

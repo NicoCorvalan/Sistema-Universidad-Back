@@ -42,7 +42,11 @@ public class AlumnoController {
             Alumno alumno = alumnoOptional.get();
             alumno.setNombre(updatedAlumno.getNombre());
             alumno.setApellido(updatedAlumno.getApellido());
-            // Actualizar los demás campos según sea necesario
+            alumno.setDni(updatedAlumno.getDni());
+            alumno.setCarrera(updatedAlumno.getCarrera());
+            alumno.setTelefono(updatedAlumno.getTelefono());
+            alumno.setNumero_legajo(updatedAlumno.getNumero_legajo());
+            alumno.setEstado(updatedAlumno.getEstado());
             alumnoRepository.save(alumno);
             return new ResponseEntity<>("Alumno actualizado exitosamente", HttpStatus.OK);
         } else {

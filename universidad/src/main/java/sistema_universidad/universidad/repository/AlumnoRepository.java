@@ -7,7 +7,7 @@ import sistema_universidad.universidad.model.Alumno;
 
 @Repository
 public interface AlumnoRepository extends JpaRepository<Alumno, Long> {
+  
     
-
 
 }
