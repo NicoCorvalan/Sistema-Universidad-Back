@@ -1,7 +1,6 @@
 package sistema_universidad.universidad.controller;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,53 +14,42 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import sistema_universidad.universidad.model.Alumno;
-import sistema_universidad.universidad.repository.AlumnoRepository;
+import sistema_universidad.universidad.service.AlumnoService;
+
 
 @RestController
 @RequestMapping("/universidad/alumnos")
 public class AlumnoController {
 
     @Autowired
-    private AlumnoRepository alumnoRepository;
+    private AlumnoService alumnoService;
 
     @GetMapping
-    public List<Alumno> getAlumnos() {
-        return alumnoRepository.findAll();
+    public List<Alumno> mostrarAlumnos() {
+        return alumnoService.mostrarAlumnos();
+    }
+
+    @GetMapping("/{id}")
+    public Alumno buscarPorId(@PathVariable Long id) {
+        return alumnoService.buscarPorId(id);
     }
 
     @PostMapping
-    public ResponseEntity<?> saveAlumno(@RequestBody Alumno alumno) {
-        alumnoRepository.save(alumno);
+    public ResponseEntity<?> crearAlumno(@RequestBody Alumno alumno) {
+        alumnoService.crearAlumno(alumno);
         return new ResponseEntity<>("Alumno creado exitosamente", HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<?> updateAlumno(@PathVariable Long id, @RequestBody Alumno updatedAlumno) {
-        Optional<Alumno> alumnoOptional = alumnoRepository.findById(id);
-        if (alumnoOptional.isPresent()) {
-            Alumno alumno = alumnoOptional.get();
-            alumno.setNombre(updatedAlumno.getNombre());
-            alumno.setApellido(updatedAlumno.getApellido());
-            alumno.setDni(updatedAlumno.getDni());
-            alumno.setCarrera(updatedAlumno.getCarrera());
-            alumno.setTelefono(updatedAlumno.getTelefono());
-            alumno.setNumero_legajo(updatedAlumno.getNumero_legajo());
-            alumno.setEstado(updatedAlumno.getEstado());
-            alumnoRepository.save(alumno);
-            return new ResponseEntity<>("Alumno actualizado exitosamente", HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>("Alumno no encontrado", HttpStatus.NOT_FOUND);
-        }
+    @PutMapping
+    public ResponseEntity<?> editarAlumno(@RequestBody Alumno alumno){
+        alumnoService.editarAlumno(alumno);
+        return new ResponseEntity<>("Alumno modificado exitosamente", HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteAlumno(@PathVariable Long id) {
-        Optional<Alumno> alumnoOptional = alumnoRepository.findById(id);
-        if (alumnoOptional.isPresent()) {
-            alumnoRepository.deleteById(id);
-            return new ResponseEntity<>("Alumno eliminado exitosamente", HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>("Alumno no encontrado", HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity<?> eliminarAlumno(@PathVariable Long id) {
+        alumnoService.eliminarAlumno(id);
+        return new ResponseEntity<>("Alumno eliminado satisfactoriamente", HttpStatus.OK);
     }
+    
 }
