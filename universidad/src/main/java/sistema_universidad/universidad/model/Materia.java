@@ -22,10 +22,9 @@ public class Materia {
 
     @Column(name = "nombre")
     private String nombre;
-
-    @ManyToOne
-    @JoinColumn(name = "carrera_id", nullable = false)
-    private Carrera carrera;
+    
+    @Column
+    private Long carrera;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "duracion")

@@ -28,7 +28,7 @@ public class Alumno {
     private String dni;
     
     @Column(name = "carrera_id")
-    private int carrera;
+    private Long carrera;
 
     @Column(name = "telefono")
     private String telefono;
