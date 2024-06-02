@@ -1,7 +1,3 @@
-Claro, aquí tienes una posible descripción para tu proyecto en GitHub:
-
----
-
 # Sistema de Gestión Universitaria
 
 Este proyecto es un sistema de gestión universitaria desarrollado utilizando Spring Boot, una plataforma de desarrollo de aplicaciones Java, que proporciona un marco completo para el desarrollo de aplicaciones empresariales.
@@ -69,5 +65,3 @@ Este proyecto proporciona un sistema de gestión universitaria que puedes utiliz
 ¡Y eso es todo! Ahora puedes comenzar a utilizar el sistema de gestión universitaria para administrar los datos de tu institución educativa.
 
 ---
-
-Es importante personalizar las instrucciones según las características específicas de tu proyecto y proporcionar la información necesaria para que los usuarios puedan utilizarlo fácilmente en su entorno local. Espero que esta descripción sea útil para tus usuarios.
