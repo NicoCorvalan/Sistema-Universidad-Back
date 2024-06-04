@@ -60,7 +60,15 @@ Este proyecto proporciona un sistema de gestión universitaria que puedes utiliz
 
 6. Accede a la aplicación a través de tu navegador web utilizando la URL `http://localhost:8080`.
 
-7. Desde la interfaz de usuario, podrás realizar operaciones CRUD (Crear, Leer, Actualizar, Eliminar) sobre los datos de alumnos, carreras y materias.
+# Documentación de la API
+
+La documentación de la API generada por Swagger está disponible en la siguiente URL:
+
+[Documentación de la API](http://localhost:8080/swagger-ui/index.html)
+
+Desde esta interfaz, puedes explorar y probar todas las operaciones disponibles en la API.
+
+8. Desde la interfaz de usuario, podrás realizar operaciones CRUD (Crear, Leer, Actualizar, Eliminar) sobre los datos de alumnos, carreras y materias.
 
 ¡Y eso es todo! Ahora puedes comenzar a utilizar el sistema de gestión universitaria para administrar los datos de tu institución educativa.
 
