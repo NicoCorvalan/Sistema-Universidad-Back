@@ -25,6 +25,9 @@ public class Carrera{
     @Column(name = "nombre")
     private String nombre;
 
+    @Column(name = "duracion")
+    private int duracion;
+
     @OneToMany(mappedBy = "carrera", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Alumno> alumnos;
 

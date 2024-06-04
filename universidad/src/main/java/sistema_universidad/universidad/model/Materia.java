@@ -22,8 +22,8 @@ public class Materia {
 
     @Column(name = "nombre")
     private String nombre;
-    
-    @Column
+
+    @Column(name = "carrera_id")
     private Long carrera;
 
     @Enumerated(EnumType.STRING)
