@@ -18,16 +18,6 @@ Este proyecto es un sistema de gestión universitaria desarrollado utilizando Sp
 
 - **Hibernate:** Framework de mapeo objeto-relacional para la gestión de la capa de persistencia.
 
-## Requisitos del Sistema
-
-- Java 8 o superior.
-  
-- Maven 3.x (para construir y administrar el proyecto).
-  
-- MySQL (u otro sistema de gestión de bases de datos relacional compatible).
-
-Por supuesto, aquí tienes una descripción actualizada para la sección de cómo utilizar el proyecto:
-
 ---
 
 ## Cómo Utilizar
@@ -40,7 +30,7 @@ Este proyecto proporciona un sistema de gestión universitaria que puedes utiliz
   
 - Maven 3.x para construir y administrar el proyecto.
   
-- MySQL (u otro sistema de gestión de bases de datos relacional compatible) configurado y en ejecución.
+- MySQL
 
 ### Instrucciones
 
