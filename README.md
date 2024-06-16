@@ -1,6 +1,6 @@
 # Sistema de Gestión Universitaria
 
-Este proyecto es un sistema de gestión universitaria desarrollado utilizando Spring Boot, una plataforma de desarrollo de aplicaciones Java, que proporciona un marco completo para el desarrollo de aplicaciones empresariales.
+Este proyecto es un sistema de gestión universitaria desarrollado utilizando Spring Boot
 
 ## Funcionalidades
 
