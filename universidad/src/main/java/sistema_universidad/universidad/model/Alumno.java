@@ -1,6 +1,7 @@
 package sistema_universidad.universidad.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,23 +20,27 @@ public class Alumno {
     private Long id;
 
     @Column(name = "nombre")
+    @NotBlank(message = "El nombre no puede estar vacío")
     private String nombre;
 
     @Column(name = "apellido")
     private String apellido;
 
-    @Column(name = "dni")
+    @Column(name = "dni", unique = true, nullable = false)
+    @NotBlank(message = "El DNI no puede estar vacío")
     private String dni;
-    
-    @Column(name = "carrera_id")
-    private Long carrera;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="carrera_id")
+    private Carrera carrera;
 
     @Column(name = "telefono")
     private String telefono;
 
-    @Column(name = "numero_legajo")
-    private String numero_legajo;
-    
+    @Column(name = "numeroLegajo", unique = true, nullable = false)
+    @NotBlank(message = "El Legajo no puede estar vacío")
+    private String numeroLegajo;
+
     @Column(name = "estado")
     private String estado;
 }
