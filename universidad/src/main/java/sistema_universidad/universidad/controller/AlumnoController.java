@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import sistema_universidad.universidad.dto.AlumnoDTO;
+import sistema_universidad.universidad.dto.MateriaDTO;
 import sistema_universidad.universidad.model.Alumno;
 import sistema_universidad.universidad.service.AlumnoServiceImpl;
 
@@ -53,8 +54,13 @@ public class AlumnoController {
                     content = @Content)
     })
     @GetMapping("/{id}")
-    public Alumno buscarPorId(@Parameter(description = "id of student to be searched")@PathVariable Long id) {
-        return alumnoService.buscarPorId(id);
+    public ResponseEntity<AlumnoDTO> buscarPorId(@Parameter(description = "id of student to be searched")@PathVariable Long id) {
+        AlumnoDTO alumnoDTO = alumnoService.buscarAlumnoPorId(id);
+        if (alumnoDTO != null) {
+            return ResponseEntity.ok(alumnoDTO);
+        }else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
     }
 
     @Operation(summary = "Crear un nuevo Alumno")

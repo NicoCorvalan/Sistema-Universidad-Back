@@ -11,8 +11,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import sistema_universidad.universidad.dto.MateriaDTO;
 import sistema_universidad.universidad.model.Materia;
-import sistema_universidad.universidad.service.MateriaService;
+import sistema_universidad.universidad.service.MateriaServiceImpl;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -30,7 +31,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public class MateriaController {
 
     @Autowired
-    private MateriaService materiaService;
+    private MateriaServiceImpl materiaService;
 
     @Operation(summary = "Mostrar todas las Materias")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Found all subjects",
@@ -38,7 +39,7 @@ public class MateriaController {
         schema = @Schema(implementation = Materia.class)) })
     })
     @GetMapping
-    public List<Materia> getMaterias() {
+    public List<MateriaDTO> getMaterias() {
         return materiaService.mostrarMateria();
     }
 
@@ -52,8 +53,13 @@ public class MateriaController {
             content = @Content)
     })
     @GetMapping("/{id}")
-    public Materia buscarPorId(@Parameter(description = "id of subject to be searched") @PathVariable Long id) {
-        return materiaService.buscarPorId(id);
+    public ResponseEntity<MateriaDTO> buscarPorId(@Parameter(description = "id of subject to be searched") @PathVariable Long id) {
+        MateriaDTO materiaDTO = materiaService.buscarMateriaPorId(id);
+        if (materiaDTO != null) {
+            return ResponseEntity.ok(materiaDTO);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
     }
 
     @Operation(summary = "Crear una nueva Materia")
@@ -64,9 +70,9 @@ public class MateriaController {
         @ApiResponse(responseCode = "400", description = "Invalid input",content = @Content)
     })
     @PostMapping
-    public ResponseEntity<?> crearMateria(@RequestBody Materia materia) {
-        materiaService.crearMateria(materia);
-        return new ResponseEntity<>("Materia creada con éxito", HttpStatus.CREATED);
+    public ResponseEntity<MateriaDTO> crearMateria(@RequestBody Materia materia) {
+        MateriaDTO materiaCreada = materiaService.crearMateria(materia);
+        return new ResponseEntity<>(materiaCreada, HttpStatus.CREATED);
     }
 
     @Operation(summary = "Actualizar una Materia")

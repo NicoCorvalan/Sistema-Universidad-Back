@@ -7,7 +7,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import sistema_universidad.universidad.dto.AlumnoDTO;
+import sistema_universidad.universidad.dto.MateriaDTO;
 import sistema_universidad.universidad.model.Alumno;
+import sistema_universidad.universidad.model.Materia;
 import sistema_universidad.universidad.repository.AlumnoRepository;
 
 @Service
@@ -41,13 +43,17 @@ public class AlumnoServiceImpl {
         return convertirAAlumnoDTO(nuevoAlumno);
     }
 
+    public AlumnoDTO buscarAlumnoPorId(Long id){
+        Alumno alumno = alumnoRepository.findById(id).orElse(null);
+        if (alumno != null) {
+            return convertirAAlumnoDTO(alumno);
+        }else {
+            return null;
+        }
+    }
 
     public void eliminarAlumno(Long id){
         alumnoRepository.deleteById(id);
-    }
-
-    public Alumno buscarPorId(Long id){
-        return alumnoRepository.findById(id).orElse(null);
     }
 
     public void editarAlumno(Alumno alumno) {

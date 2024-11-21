@@ -2,6 +2,7 @@ package sistema_universidad.universidad.model;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -29,8 +30,10 @@ public class Carrera{
     private int duracion;
 
     @OneToMany(mappedBy = "carrera", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<Alumno> alumnos;
 
     @OneToMany(mappedBy = "carrera", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<Materia> materias;
 }

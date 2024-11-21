@@ -8,7 +8,7 @@ public interface AlumnoService {
     List<AlumnoDTO> mostrarAlumnos();
     AlumnoDTO crearAlumno(Alumno alumno);
     void eliminarAlumno(Long id);
-    Alumno buscarPorId(Long id);
+    AlumnoDTO buscarAlumnoPorId(Long id);
     void editarAlumno(Alumno alumno);
 }
 
