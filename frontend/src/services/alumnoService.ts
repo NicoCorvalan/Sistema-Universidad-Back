@@ -1,10 +1,11 @@
 import axios from 'axios';
+import { Alumno } from '../types/Alumno';
 
-// URL de la API que configuraste en el backend
+// URL base de la API
 const API_URL = import.meta.env.VITE_API_URL + "/universidad";
 
 // Función para obtener todos los alumnos
-export const obtenerAlumnos = async () => {
+export const obtenerAlumnos = async (): Promise<Alumno[]> => {
     try {
         const response = await axios.get(`${API_URL}/alumnos`);
         return response.data;
@@ -15,7 +16,7 @@ export const obtenerAlumnos = async () => {
 };
 
 // Función para obtener un alumno por ID
-export const obtenerAlumnoPorId = async (id: number) => {
+export const obtenerAlumnoPorId = async (id: number): Promise<Alumno> => {
     try {
         const response = await axios.get(`${API_URL}/alumnos/${id}`);
         return response.data;
@@ -26,7 +27,7 @@ export const obtenerAlumnoPorId = async (id: number) => {
 };
 
 // Función para crear un nuevo alumno
-export const crearAlumno = async (alumno: any) => {
+export const crearAlumno = async (alumno: Alumno): Promise<Alumno> => {
     try {
         const response = await axios.post(`${API_URL}/alumnos`, alumno);
         return response.data;
@@ -36,11 +37,10 @@ export const crearAlumno = async (alumno: any) => {
     }
 };
 
-
 // Función para editar un alumno
-export const editarAlumno = async (alumno: any) => {
+export const editarAlumno = async (alumno: Alumno): Promise<Alumno> => {
     try {
-        const response = await axios.put(`${API_URL}/alumnos`, alumno);
+        const response = await axios.put(`${API_URL}/alumnos/${alumno.id}`, alumno);
         return response.data;
     } catch (error) {
         console.error("Error editando el alumno", error);
@@ -49,10 +49,9 @@ export const editarAlumno = async (alumno: any) => {
 };
 
 // Función para eliminar un alumno por ID
-export const eliminarAlumno = async (id: number) => {
+export const eliminarAlumno = async (id: number): Promise<void> => {
     try {
-        const response = await axios.delete(`${API_URL}/alumnos/${id}`);
-        return response.data;
+        await axios.delete(`${API_URL}/alumnos/${id}`);
     } catch (error) {
         console.error(`Error eliminando el alumno con id ${id}`, error);
         throw error;

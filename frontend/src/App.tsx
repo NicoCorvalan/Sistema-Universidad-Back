@@ -1,61 +1,36 @@
-import React, { useEffect, useState } from 'react';
-import { obtenerAlumnos, crearAlumno, editarAlumno, eliminarAlumno } from './services/alumnoService';
+import { useState } from "react";
+import Nav from "./components/Nav";
+import AlumnoList from "./modules/alumnos/AlumnoList";
+import './tailwind.css';   // Estilos globales de Tailwind u otros
 
-interface Alumno {
-  id: number;
-  nombre: string;
-}
 
 const App: React.FC = () => {
-  const [alumnos, setAlumnos] = useState<Alumno[]>([]);
-  const [nombre, setNombre] = useState<string>('');
+  const [activeModule, setActiveModule] = useState<
+    "alumnos" | "carreras" | "materias"
+  >("alumnos");
 
-  useEffect(() => {
-    obtenerAlumnos().then(data => setAlumnos(data)).catch(error => console.error(error));
-  }, []);
-
-  const handleCrearAlumno = async () => {
-    const nuevoAlumno = { nombre };
-    try {
-      const alumnoCreado = await crearAlumno(nuevoAlumno);
-      setAlumnos(prevAlumnos => [...prevAlumnos, alumnoCreado]);
-      setNombre('');
-    } catch (error) {
-      console.error('Error creando el alumno', error);
-    }
-  };
-
-  const handleEliminarAlumno = async (id: number) => {
-    try {
-      await eliminarAlumno(id);
-      setAlumnos(prevAlumnos => prevAlumnos.filter(alumno => alumno.id !== id));
-    } catch (error) {
-      console.error('Error eliminando el alumno', error);
+  const renderModule = () => {
+    switch (activeModule) {
+      case "alumnos":
+        return <AlumnoList />;
+      // case 'carreras':
+      //   return <CarreraList />;
+      // case 'materias':
+      //   return <MateriaList />;
+      default:
+        return null;
     }
   };
 
   return (
-    <div>
-      <h1>Lista de Alumnos</h1>
-      
-      <div>
-        <input
-          type="text"
-          value={nombre}
-          onChange={(e) => setNombre(e.target.value)}
-          placeholder="Nombre del alumno"
-        />
-        <button onClick={handleCrearAlumno} disabled={!nombre}>Crear Alumno</button>
-      </div>
-
-      <ul>
-        {alumnos.map((alumno) => (
-          <li key={alumno.id}>
-            {alumno.nombre}
-            <button onClick={() => handleEliminarAlumno(alumno.id)}>Eliminar</button>
-          </li>
-        ))}
-      </ul>
+    <div className="min-h-screen flex flex-col">
+      <header className=" text-white bg-black">
+        <Nav setActiveModule={setActiveModule} />
+      </header>
+      <main className="flex-1 p-4">{renderModule()}</main>
+      <footer className="bg-gray-800 text-white p-4">
+        <p>Footer</p>
+      </footer>
     </div>
   );
 };
