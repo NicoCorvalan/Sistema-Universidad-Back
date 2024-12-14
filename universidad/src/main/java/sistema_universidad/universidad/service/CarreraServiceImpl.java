@@ -29,12 +29,12 @@ public class CarreraServiceImpl implements CarreraService {
     }
 
     @Override
-    public void eliminarCarrera(Long id){
+    public void eliminarCarrera(Integer id){
         carreraRepository.deleteById(id);
     }
 
     @Override
-    public Carrera buscarPorId(Long id){
+    public Carrera buscarPorId(Integer id){
         return carreraRepository.findById(id).orElse(null);
     }
 

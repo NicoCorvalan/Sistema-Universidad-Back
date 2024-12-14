@@ -46,7 +46,7 @@ public class CarreraController {
                     content = @Content)
     })
     @GetMapping("/{id}")
-    public CarreraDTO buscarPorId(@Parameter(description = "id of career to be searched") @PathVariable Long id) {
+    public CarreraDTO buscarPorId(@Parameter(description = "id of career to be searched") @PathVariable Integer id) {
         Carrera carrera = carreraService.buscarPorId(id);
         if (carrera != null) {
             return new CarreraDTO(carrera.getId(), carrera.getNombre(), carrera.getDuracion());
@@ -93,7 +93,7 @@ public class CarreraController {
                     content = @Content)
     })
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> eliminarCarrera(@Parameter(description = "id of career to be deleted") @PathVariable Long id) {
+    public ResponseEntity<?> eliminarCarrera(@Parameter(description = "id of career to be deleted") @PathVariable Integer id) {
         carreraService.eliminarCarrera(id);
         return new ResponseEntity<>("Carrera eliminada exitosamente", HttpStatus.OK);
     }

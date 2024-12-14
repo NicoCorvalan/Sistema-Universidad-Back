@@ -8,7 +8,7 @@ import java.util.List;
 public interface CarreraService {
     List<CarreraDTO> mostrarCarrera();
     Carrera crearCarrera(Carrera carrera);
-    void eliminarCarrera(Long id);
-    Carrera buscarPorId(Long id);
+    void eliminarCarrera(Integer id);
+    Carrera buscarPorId(Integer id);
     void editarCarrera(Carrera carrera);
 }

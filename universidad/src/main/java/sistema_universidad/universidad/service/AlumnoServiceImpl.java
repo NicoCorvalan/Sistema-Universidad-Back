@@ -7,17 +7,32 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import sistema_universidad.universidad.dto.AlumnoDTO;
-import sistema_universidad.universidad.dto.MateriaDTO;
 import sistema_universidad.universidad.model.Alumno;
-import sistema_universidad.universidad.model.Materia;
+import sistema_universidad.universidad.model.Carrera;
 import sistema_universidad.universidad.repository.AlumnoRepository;
+import sistema_universidad.universidad.repository.CarreraRepository;
 
 @Service
 @RequiredArgsConstructor
-public class AlumnoServiceImpl {
+public class AlumnoServiceImpl implements AlumnoService {
 
     private final AlumnoRepository alumnoRepository;
+    private final CarreraRepository carreraRepository;  // Agregar el repositorio de Carrera
 
+    public AlumnoDTO crearAlumno(Alumno alumno) {
+        // Obtener la carrera desde la base de datos usando el ID
+        Carrera carrera = carreraRepository.findById(alumno.getCarrera().getId())
+                .orElseThrow(() -> new RuntimeException("Carrera no encontrada"));
+
+        // Asignar la carrera al alumno
+        alumno.setCarrera(carrera);
+
+        // Guardar el nuevo alumno en la base de datos
+        Alumno nuevoAlumno = alumnoRepository.save(alumno);
+
+        // Convierte la entidad Alumno guardada a AlumnoDTO y la devuelve
+        return convertirAAlumnoDTO(nuevoAlumno);
+    }
     public List<AlumnoDTO> mostrarAlumnos() {
         List<Alumno> alumnos = alumnoRepository.findAll();
         return alumnos.stream().map(this::convertirAAlumnoDTO).collect(Collectors.toList());
@@ -34,13 +49,6 @@ public class AlumnoServiceImpl {
                 alumno.getNumeroLegajo(),
                 alumno.getEstado()
         );
-    }
-
-    public AlumnoDTO crearAlumno(Alumno alumno) {
-        // Guarda el nuevo alumno en la base de datos
-        Alumno nuevoAlumno = alumnoRepository.save(alumno);
-        // Convierte la entidad Alumno guardada a AlumnoDTO y la devuelve
-        return convertirAAlumnoDTO(nuevoAlumno);
     }
 
     public AlumnoDTO buscarAlumnoPorId(Long id){

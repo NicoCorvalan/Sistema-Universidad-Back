@@ -5,6 +5,6 @@ import org.springframework.stereotype.Repository;
 import sistema_universidad.universidad.model.Carrera;
 
 @Repository
-public interface CarreraRepository extends JpaRepository<Carrera, Long> {
+public interface CarreraRepository extends JpaRepository<Carrera, Integer> {
 
 }
