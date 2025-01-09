@@ -40,6 +40,15 @@ public class CarreraServiceImpl implements CarreraService {
 
     @Override
     public void editarCarrera(Carrera carrera) {
-        carreraRepository.save(carrera);
+        // Verificar si la carrera con el ID dado existe
+        Carrera carreraExistente = carreraRepository.findById(carrera.getId())
+                .orElseThrow(() -> new RuntimeException("Carrera no encontrada"));
+
+        // Actualizar los campos necesarios de la carrera existente
+        carreraExistente.setNombre(carrera.getNombre());
+        carreraExistente.setDuracion(carrera.getDuracion());
+
+        // Guardar los cambios
+        carreraRepository.save(carreraExistente);
     }
 }

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import sistema_universidad.universidad.dto.AlumnoDTO;
+import sistema_universidad.universidad.dto.CrearAlumnoDTO;
 import sistema_universidad.universidad.dto.MateriaDTO;
 import sistema_universidad.universidad.model.Alumno;
 import sistema_universidad.universidad.service.AlumnoServiceImpl;
@@ -70,13 +71,12 @@ public class AlumnoController {
             @ApiResponse(responseCode = "400", description = "Invalid input",
                     content = @Content)
     })
-    @PostMapping
-    public ResponseEntity<AlumnoDTO> crearAlumno(@RequestBody Alumno alumno) {
-        // Llama al servicio para crear el alumno y obtener el DTO
-        AlumnoDTO alumnoCreado = alumnoService.crearAlumno(alumno);
-        // Retorna el AlumnoDTO con el estado HTTP 201 (CREATED)
-        return new ResponseEntity<>(alumnoCreado, HttpStatus.CREATED);
+    @PostMapping()
+    public ResponseEntity<AlumnoDTO> crearAlumno(@RequestBody CrearAlumnoDTO crearAlumnoDTO) {
+        AlumnoDTO alumnoDTO = alumnoService.crearAlumno(crearAlumnoDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(alumnoDTO);
     }
+
 
     @Operation(summary = "Actualizar un alumno")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Student updated successfully",
@@ -87,10 +87,13 @@ public class AlumnoController {
             @ApiResponse(responseCode = "404", description = "Student not found",
                     content = @Content)
     })
-    @PutMapping
-    public ResponseEntity<?> editarAlumno(@RequestBody Alumno alumno) {
-        alumnoService.editarAlumno(alumno);
-        return new ResponseEntity<>("Alumno modificado exitosamente", HttpStatus.OK);
+    @PutMapping("/{id}")
+    public ResponseEntity<?> editarAlumno(
+            @PathVariable Long id,
+            @RequestBody CrearAlumnoDTO crearAlumnoDTO) {
+
+        AlumnoDTO alumnoActualizado = alumnoService.editarAlumno(id, crearAlumnoDTO);
+        return new ResponseEntity<>(alumnoActualizado, HttpStatus.OK);
     }
 
     @Operation(summary = "Eliminar un Alumno segun el ID")
