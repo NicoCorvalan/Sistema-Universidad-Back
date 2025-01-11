@@ -71,7 +71,10 @@ public class AlumnoServiceImpl implements AlumnoService {
     }
 
     public void eliminarAlumno(Long id){
-        alumnoRepository.deleteById(id);
+        Alumno alumno = alumnoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Alumno no encontrado"));
+        alumno.setEstado("inactivo");
+        alumnoRepository.save(alumno);
     }
 
     public AlumnoDTO editarAlumno(Long id, CrearAlumnoDTO crearAlumnoDTO) {

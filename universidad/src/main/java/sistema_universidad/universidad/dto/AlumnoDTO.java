@@ -9,6 +9,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class AlumnoDTO {
 
+    //Esto es lo que se muestra al cliente
     private Long id;
     private String nombre;
     private String apellido;

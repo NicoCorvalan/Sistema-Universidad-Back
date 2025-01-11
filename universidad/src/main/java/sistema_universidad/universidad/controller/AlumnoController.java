@@ -107,6 +107,6 @@ public class AlumnoController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> eliminarAlumno(@Parameter(description = "id of student to be deleted")@PathVariable Long id) {
         alumnoService.eliminarAlumno(id);
-        return new ResponseEntity<>("Alumno eliminado satisfactoriamente", HttpStatus.OK);
+        return new ResponseEntity<>("El estado del Alumno se cambio a 'Inactivo' satisfactoriamente", HttpStatus.OK);
     }
 }
