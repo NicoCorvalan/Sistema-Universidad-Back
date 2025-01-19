@@ -6,6 +6,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import sistema_universidad.universidad.enums.Estado;
 
 @Getter
 @Setter
@@ -21,10 +22,10 @@ public class Alumno {
 
     @Column(name = "nombre", length = 100)
     @NotBlank(message = "El nombre no puede estar vacío")
-    @Size(min = 3, max = 100, message = "El nombre debe tener entre 3 y 100 caracteres")
+    @Size(min = 3, max = 20, message = "El nombre debe tener entre 3 y 20 caracteres")
     private String nombre;
 
-    @Column(name = "apellido", length = 100)
+    @Column(name = "apellido", length = 20)
     @NotBlank(message = "El apellido no puede estar vacío")
     private String apellido;
 
@@ -48,6 +49,7 @@ public class Alumno {
     private String numeroLegajo;
 
     @Column(name = "estado")
-    @Pattern(regexp = "^(activo|inactivo)$", message = "El estado debe ser 'activo' o 'inactivo'")
-    private String estado;
+    @Enumerated(EnumType.STRING)
+    private Estado estado;
+
 }

@@ -4,5 +4,6 @@ export interface Alumno {
   nombre: string;
   apellido: string;
   dni: string;
-  carreraNombre: string; // Cambié esto a una propiedad string
+  carreraNombre: string;
+  estado: string;// Cambié esto a una propiedad string
 }

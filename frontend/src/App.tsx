@@ -1,8 +1,7 @@
 import { useState } from "react";
 import Nav from "./components/Nav";
-import AlumnoList from "./modules/alumnos/AlumnoList";
-import './tailwind.css';   // Estilos globales de Tailwind u otros
-
+import AlumnoList from "./modules/alumnos/AlumnoPage";
+import "./tailwind.css"; // Estilos globales de Tailwind u otros
 
 const App: React.FC = () => {
   const [activeModule, setActiveModule] = useState<

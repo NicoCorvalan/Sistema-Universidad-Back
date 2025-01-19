@@ -8,11 +8,11 @@ import sistema_universidad.universidad.enums.Duracion;
 @Getter
 @Setter
 @AllArgsConstructor
-public class MateriaDTO {
+public class CrearMateriaDTO {
 
-    private Long id;
     private String nombre;
-    private String carreraNombre;
-    private Duracion duracion;
+    private Integer carreraId;
     private int horasCursado;
+    private Duracion duracion;
+
 }

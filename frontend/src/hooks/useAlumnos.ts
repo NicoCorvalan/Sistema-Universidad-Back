@@ -3,7 +3,7 @@ import {
   obtenerAlumnos,
   crearAlumno,
   editarAlumno,
-  eliminarAlumno,
+  darDeBajaAlumno,
 } from "../services/alumnoService";
 import { Alumno } from "../types/Alumno";
 
@@ -50,7 +50,7 @@ export const useAlumnos = () => {
 
   const deleteAlumno = async (id: number) => {
     try {
-      await eliminarAlumno(id);
+      await darDeBajaAlumno(id);
       setAlumnos((prevAlumnos) => prevAlumnos.filter((a) => a.id !== id));
     } catch (error) {
       setError("Error al eliminar el alumno");

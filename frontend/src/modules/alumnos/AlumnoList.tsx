@@ -1,54 +1,43 @@
-// src/modules/alumnos/AlumnoList.tsx
-import React, { useState, useEffect } from "react";
-import { obtenerAlumnos } from "../../services/alumnoService";
-import { Alumno } from "../../types/Alumno"; // Importa la interfaz Alumno
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableFooter,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "../../components/ui/table";
+import React from "react";
+import { Alumno } from "../../types/Alumno";
+import { Table, TableBody, TableCell, TableHeader, TableRow } from "../../components/ui/table"; // Asegúrate de que la ruta sea correcta
 
-const AlumnoList: React.FC = () => {
-  const [alumnos, setAlumnos] = useState<Alumno[]>([]);
-  const [search, setSearch] = useState<string>("");
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const [alumnosPerPage] = useState<number>(5);
+interface AlumnoListProps {
+  alumnos: Alumno[];
+  onBaja: (id: number) => void;
+  search: string;
+  setSearch: React.Dispatch<React.SetStateAction<string>>;
+  currentPage: number;
+  alumnosPerPage: number;
+  paginate: (pageNumber: number) => void;
+}
 
-  useEffect(() => {
-    obtenerAlumnos()
-      .then((data) => setAlumnos(data))
-      .catch((error) => console.error(error));
-  }, []);
-
-  // Filtra los alumnos según el texto de búsqueda
-  const filteredAlumnos = alumnos.filter((alumno) =>
-    alumno.nombre.toLowerCase().includes(search.toLowerCase()) ||
-    alumno.dni.includes(search)
+const AlumnoList: React.FC<AlumnoListProps> = ({
+  alumnos,
+  onBaja,
+  search,
+  setSearch,
+  currentPage,
+  alumnosPerPage,
+  paginate,
+}) => {
+  // Filtrar los alumnos por nombre o DNI
+  const filteredAlumnos = alumnos.filter(
+    (alumno) =>
+      alumno.nombre.toLowerCase().includes(search.toLowerCase()) ||
+      alumno.dni.includes(search)
   );
 
-  // Obtiene los alumnos a mostrar en la página actual
+  // Obtener los alumnos a mostrar en la página actual
   const indexOfLastAlumno = currentPage * alumnosPerPage;
   const indexOfFirstAlumno = indexOfLastAlumno - alumnosPerPage;
   const currentAlumnos = filteredAlumnos.slice(indexOfFirstAlumno, indexOfLastAlumno);
-
-  // Cambia la página cuando el usuario hace clic en un número
-  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
-
-  const handleEliminar = (id: number) => {
-    console.log(`Eliminar alumno con ID: ${id}`);
-    setAlumnos(alumnos.filter((alumno) => alumno.id !== id));
-  };
 
   return (
     <div className="overflow-x-auto p-4 w-9/12 mx-auto">
       <h2 className="text-2xl font-semibold mb-4">Lista de Alumnos</h2>
 
-      {/* Buscador */}
+      {/* Barra de búsqueda */}
       <input
         type="text"
         placeholder="Buscar por nombre o DNI"
@@ -57,43 +46,39 @@ const AlumnoList: React.FC = () => {
         onChange={(e) => setSearch(e.target.value)}
       />
 
+      {/* Tabla de alumnos */}
       <Table aria-label="Lista de Alumnos" className="min-w-full table-auto border-collapse">
-        <TableCaption>Lista de alumnos registrados</TableCaption>
         <TableHeader>
           <TableRow>
-            <TableHead className="w-[100px]">ID</TableHead>
-            <TableHead>Nombre</TableHead>
-            <TableHead>Apellido</TableHead>
-            <TableHead>DNI</TableHead>
-            <TableHead>Carrera</TableHead>
-            <TableHead>Acciones</TableHead>
+            <TableCell className="px-4 py-2 border font-semibold">ID</TableCell>
+            <TableCell className="px-4 py-2 border font-semibold">Nombre</TableCell>
+            <TableCell className="px-4 py-2 border font-semibold">Apellido</TableCell>
+            <TableCell className="px-4 py-2 border font-semibold">DNI</TableCell>
+            <TableCell className="px-4 py-2 border font-semibold">Estado</TableCell>
+            <TableCell className="px-4 py-2 border font-semibold">Carrera</TableCell>
+            <TableCell className="px-4 py-2 border font-semibold">Acciones</TableCell>
           </TableRow>
         </TableHeader>
         <TableBody>
           {currentAlumnos.map((alumno) => (
             <TableRow key={alumno.id}>
-              <TableCell>{alumno.id}</TableCell>
-              <TableCell>{alumno.nombre}</TableCell>
-              <TableCell>{alumno.apellido}</TableCell>
-              <TableCell>{alumno.dni}</TableCell>
-              <TableCell>{alumno.carreraNombre}</TableCell>
-              <TableCell>
+              <TableCell className="px-4 py-2 border">{alumno.id}</TableCell>
+              <TableCell className="px-4 py-2 border">{alumno.nombre}</TableCell>
+              <TableCell className="px-4 py-2 border">{alumno.apellido}</TableCell>
+              <TableCell className="px-4 py-2 border">{alumno.dni}</TableCell>
+              <TableCell className="px-4 py-2 border">{alumno.estado}</TableCell>
+              <TableCell className="px-4 py-2 border">{alumno.carreraNombre}</TableCell>
+              <TableCell className="px-4 py-2 border">
                 <button
-                  onClick={() => handleEliminar(alumno.id)}
-                  className="bg-red-500 text-white px-4 py-2 rounded transition duration-200"
+                  onClick={() => onBaja(alumno.id)}
+                  className="bg-red-500 text-white py-1 px-3 rounded hover:bg-red-600 transition"
                 >
-                  Eliminar
+                  Baja
                 </button>
               </TableCell>
             </TableRow>
           ))}
         </TableBody>
-        <TableFooter>
-          <TableRow>
-            <TableCell colSpan={5}>Total de alumnos</TableCell>
-            <TableCell className="text-right">{filteredAlumnos.length}</TableCell>
-          </TableRow>
-        </TableFooter>
       </Table>
 
       {/* Paginación */}

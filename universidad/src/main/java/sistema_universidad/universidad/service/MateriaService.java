@@ -1,17 +1,16 @@
 package sistema_universidad.universidad.service;
 
 
-import sistema_universidad.universidad.dto.AlumnoDTO;
+import sistema_universidad.universidad.dto.CrearMateriaDTO;
 import sistema_universidad.universidad.dto.MateriaDTO;
-import sistema_universidad.universidad.model.Alumno;
-import sistema_universidad.universidad.model.Materia;
+
 
 import java.util.List;
 
 public interface MateriaService {
-    List<MateriaDTO> mostrarMateria();
-    MateriaDTO crearMateria(Materia materia);
+    List<MateriaDTO> mostrarMaterias();
+    MateriaDTO crearMateria(CrearMateriaDTO crearMateriaDTO);
     void eliminarMateria(Long id);
     MateriaDTO buscarMateriaPorId(Long id);
-    void editarMateria(Materia materia);
+    MateriaDTO editarMateria(Long id, CrearMateriaDTO crearMateriaDTO);
 }

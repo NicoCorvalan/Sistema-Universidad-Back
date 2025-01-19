@@ -20,6 +20,7 @@ public class AlumnoServiceImpl implements AlumnoService {
     private final AlumnoRepository alumnoRepository;
     private final CarreraRepository carreraRepository;  // Agregar el repositorio de Carrera
 
+    @Override
     public AlumnoDTO crearAlumno(CrearAlumnoDTO crearAlumnoDTO) {
         // Buscar carrera por ID
         Carrera carrera = carreraRepository.findById(crearAlumnoDTO.getCarreraId())
@@ -42,12 +43,6 @@ public class AlumnoServiceImpl implements AlumnoService {
         return convertirAAlumnoDTO(nuevoAlumno);
     }
 
-
-    public List<AlumnoDTO> mostrarAlumnos() {
-        List<Alumno> alumnos = alumnoRepository.findAll();
-        return alumnos.stream().map(this::convertirAAlumnoDTO).collect(Collectors.toList());
-    }
-
     private AlumnoDTO convertirAAlumnoDTO(Alumno alumno) {
         return new AlumnoDTO(
                 alumno.getId(),
@@ -61,6 +56,13 @@ public class AlumnoServiceImpl implements AlumnoService {
         );
     }
 
+    @Override
+    public List<AlumnoDTO> mostrarAlumnos() {
+        List<Alumno> alumnos = alumnoRepository.findAll();
+        return alumnos.stream().map(this::convertirAAlumnoDTO).collect(Collectors.toList());
+    }
+
+    @Override
     public AlumnoDTO buscarAlumnoPorId(Long id){
         Alumno alumno = alumnoRepository.findById(id).orElse(null);
         if (alumno != null) {
@@ -69,14 +71,7 @@ public class AlumnoServiceImpl implements AlumnoService {
             return null;
         }
     }
-
-    public void eliminarAlumno(Long id){
-        Alumno alumno = alumnoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Alumno no encontrado"));
-        alumno.setEstado("inactivo");
-        alumnoRepository.save(alumno);
-    }
-
+    @Override
     public AlumnoDTO editarAlumno(Long id, CrearAlumnoDTO crearAlumnoDTO) {
         Alumno alumnoExistente = alumnoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Alumno no encontrado"));
@@ -102,7 +97,6 @@ public class AlumnoServiceImpl implements AlumnoService {
         // Retornar el DTO actualizado
         return convertirAAlumnoDTO(actualizado);
     }
-
 
 }
 

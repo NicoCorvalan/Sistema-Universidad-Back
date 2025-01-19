@@ -48,12 +48,12 @@ export const editarAlumno = async (alumno: Alumno): Promise<Alumno> => {
     }
 };
 
-// Función para eliminar un alumno por ID
-export const eliminarAlumno = async (id: number): Promise<void> => {
+// Función para dar de baja lógica a un alumno
+export const darDeBajaAlumno = async (id: number): Promise<void> => {
     try {
-        await axios.delete(`${API_URL}/alumnos/${id}`);
+        await axios.put(`${API_URL}/alumnos/${id}/baja`);
     } catch (error) {
-        console.error(`Error eliminando el alumno con id ${id}`, error);
+        console.error(`Error al dar de baja al alumno con id ${id}`, error);
         throw error;
     }
 };

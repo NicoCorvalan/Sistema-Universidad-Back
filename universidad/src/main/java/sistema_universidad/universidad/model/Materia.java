@@ -2,12 +2,15 @@ package sistema_universidad.universidad.model;
 
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import sistema_universidad.universidad.enums.Duracion;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -26,16 +29,16 @@ public class Materia {
     private String nombre;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @NotNull(message = "El ID de la carrera es obligatorio")
     @JoinColumn(name="carrera_id")
     private Carrera carrera;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "duracion")
-    private Duracion duracion;
-
     @Column(name = "horas_cursado")
+    @Min(value = 1, message = "Las horas de cursado deben ser mayores a 0")
     private int horasCursado;
 
-    public enum Duracion {anual, cuatrimestral}
-    
+    @Enumerated(EnumType.STRING)
+    @Column(name = "duracion")
+    @NotNull(message = "La duración es obligatoria")
+    private Duracion duracion;
 }

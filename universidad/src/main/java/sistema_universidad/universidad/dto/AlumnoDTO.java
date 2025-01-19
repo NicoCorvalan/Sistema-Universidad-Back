@@ -3,6 +3,7 @@ package sistema_universidad.universidad.dto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import sistema_universidad.universidad.enums.Estado;
 
 @Getter
 @Setter
@@ -17,6 +18,6 @@ public class AlumnoDTO {
     private String carreraNombre; // Este campo mostrará el nombre de la carrera
     private String telefono;
     private String numeroLegajo;
-    private String estado;
+    private Estado estado;
 }
 

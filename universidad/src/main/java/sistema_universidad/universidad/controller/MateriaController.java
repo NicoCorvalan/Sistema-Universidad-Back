@@ -2,7 +2,7 @@ package sistema_universidad.universidad.controller;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import sistema_universidad.universidad.dto.CrearMateriaDTO;
 import sistema_universidad.universidad.dto.MateriaDTO;
 import sistema_universidad.universidad.model.Materia;
 import sistema_universidad.universidad.service.MateriaServiceImpl;
@@ -25,13 +26,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 
-
+@AllArgsConstructor
 @RestController
 @RequestMapping("/universidad/materias")
 public class MateriaController {
 
-    @Autowired
-    private MateriaServiceImpl materiaService;
+    private final MateriaServiceImpl materiaService;
 
     @Operation(summary = "Mostrar todas las Materias")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Found all subjects",
@@ -39,8 +39,8 @@ public class MateriaController {
         schema = @Schema(implementation = Materia.class)) })
     })
     @GetMapping
-    public List<MateriaDTO> getMaterias() {
-        return materiaService.mostrarMateria();
+    public List<MateriaDTO> mostrarMaterias() {
+        return materiaService.mostrarMaterias();
     }
 
     @Operation(summary = "Mostrar la Materia segun el ID")
@@ -70,9 +70,9 @@ public class MateriaController {
         @ApiResponse(responseCode = "400", description = "Invalid input",content = @Content)
     })
     @PostMapping
-    public ResponseEntity<MateriaDTO> crearMateria(@RequestBody Materia materia) {
-        MateriaDTO materiaCreada = materiaService.crearMateria(materia);
-        return new ResponseEntity<>(materiaCreada, HttpStatus.CREATED);
+    public ResponseEntity<MateriaDTO> crearMateria(@RequestBody CrearMateriaDTO crearMateriaDTO) {
+        MateriaDTO materiaDTO = materiaService.crearMateria(crearMateriaDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(materiaDTO);
     }
 
     @Operation(summary = "Actualizar una Materia")
@@ -84,10 +84,10 @@ public class MateriaController {
         @ApiResponse(responseCode = "404", description = "Subject not found",
             content = @Content)
     })
-    @PutMapping
-    public ResponseEntity<?> editarMateria(@RequestBody Materia materia) {
-        materiaService.editarMateria(materia);
-        return new ResponseEntity<>("Materia editada con éxito", HttpStatus.OK);
+    @PutMapping("/{id}")
+    public ResponseEntity<?> editarMateria(@PathVariable Long id, @RequestBody CrearMateriaDTO crearMateriaDTO) {
+        MateriaDTO materiaActualizada = materiaService.editarMateria(id, crearMateriaDTO);
+        return new ResponseEntity<>(materiaActualizada, HttpStatus.OK);
     }
 
     @Operation(summary = "Eliminar Materia segun el ID")

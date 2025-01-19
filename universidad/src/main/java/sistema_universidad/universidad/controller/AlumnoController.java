@@ -5,7 +5,6 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import sistema_universidad.universidad.dto.AlumnoDTO;
 import sistema_universidad.universidad.dto.CrearAlumnoDTO;
-import sistema_universidad.universidad.dto.MateriaDTO;
 import sistema_universidad.universidad.model.Alumno;
 import sistema_universidad.universidad.service.AlumnoServiceImpl;
 
@@ -96,17 +94,4 @@ public class AlumnoController {
         return new ResponseEntity<>(alumnoActualizado, HttpStatus.OK);
     }
 
-    @Operation(summary = "Eliminar un Alumno segun el ID")
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Student deleted successfully",
-            content = @Content),
-            @ApiResponse(responseCode = "400", description = "Invalid id supplied",
-                    content = @Content),
-            @ApiResponse(responseCode = "404", description = "Student not found",
-                    content = @Content)
-    })
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> eliminarAlumno(@Parameter(description = "id of student to be deleted")@PathVariable Long id) {
-        alumnoService.eliminarAlumno(id);
-        return new ResponseEntity<>("El estado del Alumno se cambio a 'Inactivo' satisfactoriamente", HttpStatus.OK);
-    }
 }

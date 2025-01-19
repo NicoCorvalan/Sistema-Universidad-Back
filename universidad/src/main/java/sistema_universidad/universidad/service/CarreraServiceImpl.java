@@ -1,5 +1,6 @@
 package sistema_universidad.universidad.service;
 
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import sistema_universidad.universidad.dto.CarreraDTO;
@@ -9,11 +10,11 @@ import sistema_universidad.universidad.repository.CarreraRepository;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@AllArgsConstructor
 @Service
 public class CarreraServiceImpl implements CarreraService {
 
-    @Autowired
-    private CarreraRepository carreraRepository;
+    private final CarreraRepository carreraRepository;
 
     @Override
     public List<CarreraDTO> mostrarCarrera(){
