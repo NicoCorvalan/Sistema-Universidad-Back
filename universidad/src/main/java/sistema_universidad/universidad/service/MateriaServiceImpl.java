@@ -20,30 +20,48 @@ public class MateriaServiceImpl implements MateriaService{
     private final CarreraRepository carreraRepository;
 
     @Override
-    public MateriaDTO crearMateria(CrearMateriaDTO crearMateriaDTO){
-        Carrera carrera = carreraRepository.findById(crearMateriaDTO.getCarreraId())
-                .orElseThrow(() -> new RuntimeException("Carrrera no encontrada"));
+    public MateriaDTO crearMateria(CrearMateriaDTO crearMateriaDTO) {
+        // Buscar todas las carreras relacionadas por sus IDs
+        List<Carrera> carreras = carreraRepository.findAllById(crearMateriaDTO.getCarreraIds());
 
+        // Validar que se encontraron todas las carreras
+        if (carreras.size() != crearMateriaDTO.getCarreraIds().size()) {
+            throw new RuntimeException("Una o más carreras no fueron encontradas");
+        }
+
+        // Crear la materia
         Materia materia = new Materia();
         materia.setNombre(crearMateriaDTO.getNombre());
-        materia.setCarrera(carrera);
         materia.setHorasCursado(crearMateriaDTO.getHorasCursado());
         materia.setDuracion(crearMateriaDTO.getDuracion());
 
-        Materia nuevoMateria = materiaRepository.save(materia);
+        // Establecer las relaciones entre la materia y las carreras
+        for (Carrera carrera : carreras) {
+            materia.getCarreras().add(carrera);
+            carrera.getMaterias().add(materia);
+        }
 
-        return convertirAMateriaDTO(nuevoMateria);
+        // Guardar la nueva materia
+        Materia nuevaMateria = materiaRepository.save(materia);
+
+        return convertirAMateriaDTO(nuevaMateria);
     }
 
-    private MateriaDTO convertirAMateriaDTO( Materia materia){
+
+    private MateriaDTO convertirAMateriaDTO(Materia materia) {
+        List<String> nombresCarreras = materia.getCarreras().stream()
+                .map(Carrera::getNombre)
+                .collect(Collectors.toList());
+
         return new MateriaDTO(
                 materia.getId(),
                 materia.getNombre(),
-                materia.getCarrera().getNombre(),
+                nombresCarreras,
                 materia.getDuracion(),
                 materia.getHorasCursado()
         );
     }
+
 
     @Override
     public List<MateriaDTO> mostrarMaterias(){
@@ -70,19 +88,32 @@ public class MateriaServiceImpl implements MateriaService{
         Materia materiaExistente = materiaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Materia no encontrada"));
 
+        // Actualizar campos básicos
         materiaExistente.setNombre(crearMateriaDTO.getNombre());
         materiaExistente.setHorasCursado(crearMateriaDTO.getHorasCursado());
         materiaExistente.setDuracion(crearMateriaDTO.getDuracion());
 
-        if (crearMateriaDTO.getCarreraId() != null) {
+        // Actualizar carreras asociadas
+        if (crearMateriaDTO.getCarreraIds() != null && !crearMateriaDTO.getCarreraIds().isEmpty()) {
+            // Obtener las nuevas carreras por ID
+            List<Carrera> nuevasCarreras = carreraRepository.findAllById(crearMateriaDTO.getCarreraIds());
+            if (nuevasCarreras.size() != crearMateriaDTO.getCarreraIds().size()) {
+                throw new RuntimeException("Una o más carreras no fueron encontradas");
+            }
 
-            Carrera carrera = carreraRepository.findById(crearMateriaDTO.getCarreraId())
-                    .orElseThrow(() -> new RuntimeException("Carrrera no encontrada"));
-            materiaExistente.setCarrera(carrera);
+            // Limpiar relaciones existentes
+            materiaExistente.getCarreras().forEach(carrera -> carrera.getMaterias().remove(materiaExistente));
+            materiaExistente.getCarreras().clear();
+
+            // Asociar nuevas carreras
+            materiaExistente.setCarreras(nuevasCarreras);
+            nuevasCarreras.forEach(carrera -> carrera.getMaterias().add(materiaExistente));
         }
 
+        // Guardar los cambios
         Materia actualizado = materiaRepository.save(materiaExistente);
 
         return convertirAMateriaDTO(actualizado);
     }
+
 }

@@ -12,6 +12,9 @@ import lombok.Setter;
 import lombok.ToString;
 import sistema_universidad.universidad.enums.Duracion;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -28,10 +31,14 @@ public class Materia {
     @NotBlank(message = "El nombre no puede estar vacio")
     private String nombre;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @NotNull(message = "El ID de la carrera es obligatorio")
-    @JoinColumn(name="carrera_id")
-    private Carrera carrera;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "materia_carrera",
+            joinColumns = @JoinColumn(name = "materia_id"),
+            inverseJoinColumns = @JoinColumn(name = "carrera_id")
+    )
+    private List<Carrera> carreras;
+
 
     @Column(name = "horas_cursado")
     @Min(value = 1, message = "Las horas de cursado deben ser mayores a 0")

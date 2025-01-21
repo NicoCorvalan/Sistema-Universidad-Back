@@ -20,7 +20,7 @@ import lombok.ToString;
 @Entity
 @Table(name = "carreras")
 public class Carrera{
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -39,7 +39,8 @@ public class Carrera{
     @JsonIgnore
     private List<Alumno> alumnos;
 
-    @OneToMany(mappedBy = "carrera", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ManyToMany(mappedBy = "carreras")
     @JsonIgnore
     private List<Materia> materias;
+
 }
