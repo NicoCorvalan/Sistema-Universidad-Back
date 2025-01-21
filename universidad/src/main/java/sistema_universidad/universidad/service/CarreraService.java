@@ -1,5 +1,6 @@
 package sistema_universidad.universidad.service;
 
+import sistema_universidad.universidad.dto.CrearCarreraDTO;
 import sistema_universidad.universidad.model.Carrera;
 import sistema_universidad.universidad.dto.CarreraDTO;
 
@@ -7,8 +8,8 @@ import java.util.List;
 
 public interface CarreraService {
     List<CarreraDTO> mostrarCarrera();
-    Carrera crearCarrera(Carrera carrera);
+    CarreraDTO crearCarrera(CrearCarreraDTO crearCarreraDTO);
     void eliminarCarrera(Integer id);
     Carrera buscarPorId(Integer id);
-    void editarCarrera(Carrera carrera);
+    CarreraDTO editarCarrera(Integer id, CrearCarreraDTO crearCarreraDTO);
 }

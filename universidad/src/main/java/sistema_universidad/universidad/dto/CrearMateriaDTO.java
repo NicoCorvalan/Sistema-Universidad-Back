@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import sistema_universidad.universidad.enums.Duracion;
-import sistema_universidad.universidad.model.Carrera;
 
 import java.util.List;
 
@@ -17,6 +16,5 @@ public class CrearMateriaDTO {
     private List<Integer> carreraIds;
     private int horasCursado;
     private Duracion duracion;
-
 
 }

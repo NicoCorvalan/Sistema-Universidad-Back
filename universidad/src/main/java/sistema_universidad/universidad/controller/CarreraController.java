@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sistema_universidad.universidad.dto.CarreraDTO;
+import sistema_universidad.universidad.dto.CrearCarreraDTO;
 import sistema_universidad.universidad.model.Carrera;
 import sistema_universidad.universidad.service.CarreraService;
 
@@ -63,10 +64,13 @@ public class CarreraController {
                     content = @Content)
     })
     @PostMapping
-    public ResponseEntity<?> crearCarrera(@RequestBody Carrera carrera) {
-        carreraService.crearCarrera(carrera);
+    public ResponseEntity<String> crearCarrera(@RequestBody CrearCarreraDTO crearCarreraDTO) {
+        // Llamar al servicio con el DTO directamente
+        carreraService.crearCarrera(crearCarreraDTO);
+
         return new ResponseEntity<>("Carrera creada exitosamente", HttpStatus.CREATED);
     }
+
 
     @Operation(summary = "Actualizar una Carrera")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Career updated successfully",
@@ -77,12 +81,18 @@ public class CarreraController {
             @ApiResponse(responseCode = "404", description = "Career not found",
                     content = @Content)
     })
-    @PutMapping
-    public ResponseEntity<?> editarCarrera(@RequestBody Carrera carrera) {
-        carreraService.editarCarrera(carrera);
-        return new ResponseEntity<>("Carrera modificada exitosamente", HttpStatus.OK);
+    @PutMapping("/{id}")
+    public ResponseEntity<String> editarCarrera(@PathVariable Integer id, @RequestBody CrearCarreraDTO crearCarreraDTO) {
+        // Buscar la carrera existente
+        Carrera carreraExistente = carreraService.buscarPorId(id);
+        if (carreraExistente != null) {
+            // Pasar el DTO al servicio para actualizar la carrera
+            carreraService.editarCarrera(id, crearCarreraDTO);
+            return new ResponseEntity<>("Carrera modificada exitosamente", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("Carrera no encontrada", HttpStatus.NOT_FOUND);
+        }
     }
-
     @Operation(summary = "Eliminar una Carrera segun el ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Career deleted successfully",

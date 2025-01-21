@@ -1,5 +1,6 @@
 package sistema_universidad.universidad.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -39,8 +40,14 @@ public class Carrera{
     @JsonIgnore
     private List<Alumno> alumnos;
 
-    @ManyToMany(mappedBy = "carreras")
-    @JsonIgnore
-    private List<Materia> materias;
+    @ManyToMany
+    @JoinTable(
+            name = "carrera_materia",
+            joinColumns = @JoinColumn(name = "carrera_id"),
+            inverseJoinColumns = @JoinColumn(name = "materia_id")
+    )
+    private List<Materia> materias = new ArrayList<>();
+
+
 
 }

@@ -1,6 +1,7 @@
 package sistema_universidad.universidad.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -31,14 +32,9 @@ public class Materia {
     @NotBlank(message = "El nombre no puede estar vacio")
     private String nombre;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "materia_carrera",
-            joinColumns = @JoinColumn(name = "materia_id"),
-            inverseJoinColumns = @JoinColumn(name = "carrera_id")
-    )
-    private List<Carrera> carreras;
-
+    @ManyToMany(mappedBy = "materias")
+    @JsonIgnore
+    private List<Carrera> carreras = new ArrayList<>();
 
     @Column(name = "horas_cursado")
     @Min(value = 1, message = "Las horas de cursado deben ser mayores a 0")

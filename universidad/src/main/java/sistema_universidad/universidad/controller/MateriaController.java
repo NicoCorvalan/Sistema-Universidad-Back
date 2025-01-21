@@ -35,8 +35,8 @@ public class MateriaController {
 
     @Operation(summary = "Mostrar todas las Materias")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Found all subjects",
-        content = { @Content(mediaType = "application/json",
-        schema = @Schema(implementation = Materia.class)) })
+            content = { @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = Materia.class)) })
     })
     @GetMapping
     public List<MateriaDTO> mostrarMaterias() {
@@ -46,11 +46,11 @@ public class MateriaController {
     @Operation(summary = "Mostrar la Materia segun el ID")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Found the subject",
             content = { @Content(mediaType = "application/json",
-            schema = @Schema(implementation = Materia.class)) }),
-        @ApiResponse(responseCode = "400", description = "Invalid id supplied",
-            content = @Content),
-        @ApiResponse(responseCode = "404", description = "Subject not found",
-            content = @Content)
+                    schema = @Schema(implementation = Materia.class)) }),
+            @ApiResponse(responseCode = "400", description = "Invalid id supplied",
+                    content = @Content),
+            @ApiResponse(responseCode = "404", description = "Subject not found",
+                    content = @Content)
     })
     @GetMapping("/{id}")
     public ResponseEntity<MateriaDTO> buscarPorId(@Parameter(description = "id of subject to be searched") @PathVariable Long id) {
@@ -64,10 +64,10 @@ public class MateriaController {
 
     @Operation(summary = "Crear una nueva Materia")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "201", description = "Subject created successfully",
-            content = { @Content(mediaType = "application/json",
-            schema = @Schema(implementation = Materia.class)) }),
-        @ApiResponse(responseCode = "400", description = "Invalid input",content = @Content)
+            @ApiResponse(responseCode = "201", description = "Subject created successfully",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Materia.class)) }),
+            @ApiResponse(responseCode = "400", description = "Invalid input",content = @Content)
     })
     @PostMapping
     public ResponseEntity<MateriaDTO> crearMateria(@RequestBody CrearMateriaDTO crearMateriaDTO) {
@@ -78,11 +78,11 @@ public class MateriaController {
     @Operation(summary = "Actualizar una Materia")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Subject updated successfully",
             content = { @Content(mediaType = "application/json",
-            schema = @Schema(implementation = Materia.class)) }),
-        @ApiResponse(responseCode = "400", description = "Invalid input",
-            content = @Content),
-        @ApiResponse(responseCode = "404", description = "Subject not found",
-            content = @Content)
+                    schema = @Schema(implementation = Materia.class)) }),
+            @ApiResponse(responseCode = "400", description = "Invalid input",
+                    content = @Content),
+            @ApiResponse(responseCode = "404", description = "Subject not found",
+                    content = @Content)
     })
     @PutMapping("/{id}")
     public ResponseEntity<?> editarMateria(@PathVariable Long id, @RequestBody CrearMateriaDTO crearMateriaDTO) {
@@ -93,10 +93,10 @@ public class MateriaController {
     @Operation(summary = "Eliminar Materia segun el ID")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Subject deleted successfully",
             content = @Content),
-        @ApiResponse(responseCode = "400", description = "Invalid id supplied",
-            content = @Content),
-        @ApiResponse(responseCode = "404", description = "Subject not found",
-            content = @Content)
+            @ApiResponse(responseCode = "400", description = "Invalid id supplied",
+                    content = @Content),
+            @ApiResponse(responseCode = "404", description = "Subject not found",
+                    content = @Content)
     })
     @DeleteMapping("/{id}")
     public ResponseEntity<?> eliminarMateria(@Parameter(description = "id of subject to be deleted") @PathVariable Long id) {
