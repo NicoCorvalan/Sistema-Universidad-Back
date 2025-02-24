@@ -8,6 +8,5 @@ import java.util.List;
 
 @Repository
 public interface CarreraRepository extends JpaRepository<Carrera, Integer> {
-    public List<Carrera> findAllByIdIn(List<Integer> ids);
 
 }
