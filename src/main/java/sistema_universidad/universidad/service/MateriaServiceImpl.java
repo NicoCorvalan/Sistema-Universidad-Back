@@ -53,15 +53,14 @@ public class MateriaServiceImpl implements MateriaService{
                 .map(Carrera::getNombre)
                 .collect(Collectors.toList());
 
-        return new MateriaDTO(
-                materia.getId(),
-                materia.getNombre(),
-                nombresCarreras,
-                materia.getDuracion(),
-                materia.getHorasCursado()
-        );
+        return MateriaDTO.builder()
+                .id(materia.getId())
+                .nombre(materia.getNombre())
+                .carrera(nombresCarreras)
+                .duracion(materia.getDuracion())
+                .horasCursado(materia.getHorasCursado())
+                .build();
     }
-
 
     @Override
     public List<MateriaDTO> mostrarMaterias(){

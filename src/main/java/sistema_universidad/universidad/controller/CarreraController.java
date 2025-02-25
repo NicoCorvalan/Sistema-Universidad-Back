@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import sistema_universidad.universidad.dto.CarreraDTO;
 import sistema_universidad.universidad.dto.CrearCarreraDTO;
 import sistema_universidad.universidad.model.Carrera;
@@ -47,11 +48,11 @@ public class CarreraController {
     })
     @GetMapping("/{id}")
     public CarreraDTO buscarPorId(@Parameter(description = "id of career to be searched") @PathVariable Integer id) {
-        Carrera carrera = carreraService.buscarPorId(id);
-        if (carrera != null) {
+        try {
+            Carrera carrera = carreraService.buscarPorId(id);
             return new CarreraDTO(carrera.getId(), carrera.getNombre(), carrera.getDuracion());
-        } else {
-            return null; // O manejarlo de alguna manera
+        } catch (RuntimeException e) { // Captura la excepción lanzada en el servicio
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Carrera no encontrada");
         }
     }
 

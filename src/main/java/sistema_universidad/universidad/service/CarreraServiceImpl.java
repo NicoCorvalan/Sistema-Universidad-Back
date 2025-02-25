@@ -1,7 +1,6 @@
 package sistema_universidad.universidad.service;
 
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import sistema_universidad.universidad.dto.CarreraDTO;
 import sistema_universidad.universidad.dto.CrearCarreraDTO;
@@ -44,7 +43,11 @@ public class CarreraServiceImpl implements CarreraService {
         // Guardar la nueva carrera
         Carrera nuevaCarrera = carreraRepository.save(carrera);
 
-        return new CarreraDTO(nuevaCarrera.getId(), nuevaCarrera.getNombre(), nuevaCarrera.getDuracion());
+        return CarreraDTO.builder()
+                .id(nuevaCarrera.getId())
+                .nombre(nuevaCarrera.getNombre())
+                .duracion(nuevaCarrera.getDuracion())
+                .build();
     }
 
     @Override
@@ -75,7 +78,11 @@ public class CarreraServiceImpl implements CarreraService {
         // Guardar los cambios
         Carrera carreraActualizada = carreraRepository.save(carreraExistente);
 
-        return new CarreraDTO(carreraActualizada.getId(), carreraActualizada.getNombre(), carreraActualizada.getDuracion());
+        return CarreraDTO.builder()
+                .id(carreraActualizada.getId())
+                .nombre(carreraActualizada.getNombre())
+                .duracion(carreraActualizada.getDuracion())
+                .build();
     }
 
 
@@ -84,7 +91,11 @@ public class CarreraServiceImpl implements CarreraService {
     public List<CarreraDTO> mostrarCarrera(){
         List<Carrera> carreras = carreraRepository.findAll();
         return carreras.stream()
-                .map(c -> new CarreraDTO(c.getId(), c.getNombre(), c.getDuracion()))
+                .map(c -> CarreraDTO.builder()
+                        .id(c.getId())
+                        .nombre(c.getNombre())
+                        .duracion(c.getDuracion())
+                        .build())
                 .collect(Collectors.toList());
     }
 
@@ -97,6 +108,5 @@ public class CarreraServiceImpl implements CarreraService {
     public Carrera buscarPorId(Integer id){
         return carreraRepository.findById(id).orElse(null);
     }
-
 
 }

@@ -1,13 +1,12 @@
 package sistema_universidad.universidad.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Builder;
+import lombok.Data;
+
 import sistema_universidad.universidad.enums.Estado;
 
-@Getter
-@Setter
-@AllArgsConstructor
+@Data
+@Builder
 public class CrearAlumnoDTO {
 
     //Esto es lo que recibe el servidor

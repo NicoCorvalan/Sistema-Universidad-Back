@@ -1,15 +1,12 @@
 package sistema_universidad.universidad.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Builder;
+import lombok.Data;
 import sistema_universidad.universidad.enums.Duracion;
-
 import java.util.List;
 
-@Getter
-@Setter
-@AllArgsConstructor
+@Builder
+@Data
 public class MateriaDTO {
 
     private Long id;

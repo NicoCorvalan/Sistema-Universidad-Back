@@ -44,16 +44,16 @@ public class AlumnoServiceImpl implements AlumnoService {
     }
 
     private AlumnoDTO convertirAAlumnoDTO(Alumno alumno) {
-        return new AlumnoDTO(
-                alumno.getId(),
-                alumno.getNombre(),
-                alumno.getApellido(),
-                alumno.getDni(),
-                alumno.getCarrera().getNombre(), // Aquí se obtiene el nombre de la carrera
-                alumno.getTelefono(),
-                alumno.getNumeroLegajo(),
-                alumno.getEstado()
-        );
+        return AlumnoDTO.builder()
+                .id(alumno.getId())
+                .nombre(alumno.getNombre())
+                .apellido(alumno.getApellido())
+                .dni(alumno.getDni())
+                .carrera(alumno.getCarrera().getNombre()) // Obteniendo el nombre de la carrera
+                .telefono(alumno.getTelefono())
+                .numeroLegajo(alumno.getNumeroLegajo())
+                .estado(alumno.getEstado())
+                .build();
     }
 
     @Override
