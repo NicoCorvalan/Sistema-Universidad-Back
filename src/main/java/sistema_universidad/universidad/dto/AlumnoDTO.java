@@ -4,7 +4,6 @@ import lombok.*;
 import sistema_universidad.universidad.enums.Estado;
 
 @Data
-@Builder
 public class AlumnoDTO {
 
     //Esto es lo que se muestra al cliente

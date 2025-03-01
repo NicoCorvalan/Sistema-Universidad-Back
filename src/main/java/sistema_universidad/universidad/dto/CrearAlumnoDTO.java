@@ -6,7 +6,6 @@ import lombok.Data;
 import sistema_universidad.universidad.enums.Estado;
 
 @Data
-@Builder
 public class CrearAlumnoDTO {
 
     //Esto es lo que recibe el servidor

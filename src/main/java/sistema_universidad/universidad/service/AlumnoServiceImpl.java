@@ -1,24 +1,25 @@
 package sistema_universidad.universidad.service;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
 import sistema_universidad.universidad.dto.AlumnoDTO;
 import sistema_universidad.universidad.dto.CrearAlumnoDTO;
 import sistema_universidad.universidad.model.Alumno;
 import sistema_universidad.universidad.model.Carrera;
 import sistema_universidad.universidad.repository.AlumnoRepository;
 import sistema_universidad.universidad.repository.CarreraRepository;
+import sistema_universidad.universidad.mapper.AlumnoMapper;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class AlumnoServiceImpl implements AlumnoService {
 
     private final AlumnoRepository alumnoRepository;
-    private final CarreraRepository carreraRepository;  // Agregar el repositorio de Carrera
+    private final CarreraRepository carreraRepository;
+    private final AlumnoMapper alumnoMapper;  // Inyectamos el Mapper
 
     @Override
     public AlumnoDTO crearAlumno(CrearAlumnoDTO crearAlumnoDTO) {
@@ -30,8 +31,8 @@ public class AlumnoServiceImpl implements AlumnoService {
         Alumno alumno = new Alumno();
         alumno.setNombre(crearAlumnoDTO.getNombre());
         alumno.setApellido(crearAlumnoDTO.getApellido());
-        alumno.setDni( crearAlumnoDTO.getDni());
-        alumno.setCarrera( carrera );
+        alumno.setDni(crearAlumnoDTO.getDni());
+        alumno.setCarrera(carrera);
         alumno.setTelefono(crearAlumnoDTO.getTelefono());
         alumno.setNumeroLegajo(crearAlumnoDTO.getNumeroLegajo());
         alumno.setEstado(crearAlumnoDTO.getEstado());
@@ -39,44 +40,33 @@ public class AlumnoServiceImpl implements AlumnoService {
         // Guardar el nuevo alumno en la base de datos
         Alumno nuevoAlumno = alumnoRepository.save(alumno);
 
-        // Convierte la entidad Alumno guardada a AlumnoDTO y la devuelve
-        return convertirAAlumnoDTO(nuevoAlumno);
-    }
-
-    private AlumnoDTO convertirAAlumnoDTO(Alumno alumno) {
-        return AlumnoDTO.builder()
-                .id(alumno.getId())
-                .nombre(alumno.getNombre())
-                .apellido(alumno.getApellido())
-                .dni(alumno.getDni())
-                .carrera(alumno.getCarrera().getNombre()) // Obteniendo el nombre de la carrera
-                .telefono(alumno.getTelefono())
-                .numeroLegajo(alumno.getNumeroLegajo())
-                .estado(alumno.getEstado())
-                .build();
+        // Usamos el Mapper para convertir la entidad Alumno a AlumnoDTO
+        return alumnoMapper.alumnoToAlumnoDTO(nuevoAlumno);
     }
 
     @Override
     public List<AlumnoDTO> mostrarAlumnos() {
-        List<Alumno> alumnos = alumnoRepository.findAll();
-        return alumnos.stream().map(this::convertirAAlumnoDTO).collect(Collectors.toList());
+        return alumnoRepository.findAll().stream()
+                .map(alumnoMapper::alumnoToAlumnoDTO)  // Usamos el Mapper
+                .collect(Collectors.toList());
     }
 
     @Override
-    public AlumnoDTO buscarAlumnoPorId(Long id){
+    public AlumnoDTO buscarAlumnoPorId(Long id) {
         Alumno alumno = alumnoRepository.findById(id).orElse(null);
         if (alumno != null) {
-            return convertirAAlumnoDTO(alumno);
-        }else {
+            return alumnoMapper.alumnoToAlumnoDTO(alumno);  // Usamos el Mapper
+        } else {
             return null;
         }
     }
+
     @Override
     public AlumnoDTO editarAlumno(Long id, CrearAlumnoDTO crearAlumnoDTO) {
         Alumno alumnoExistente = alumnoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Alumno no encontrado"));
 
-        // Actualizar campos del alumno
+        // Actualizamos los campos del alumno
         alumnoExistente.setNombre(crearAlumnoDTO.getNombre());
         alumnoExistente.setApellido(crearAlumnoDTO.getApellido());
         alumnoExistente.setDni(crearAlumnoDTO.getDni());
@@ -91,12 +81,10 @@ public class AlumnoServiceImpl implements AlumnoService {
             alumnoExistente.setCarrera(carrera);
         }
 
-        // Guardar cambios
+        // Guardamos los cambios
         Alumno actualizado = alumnoRepository.save(alumnoExistente);
 
-        // Retornar el DTO actualizado
-        return convertirAAlumnoDTO(actualizado);
+        // Retornamos el DTO actualizado
+        return alumnoMapper.alumnoToAlumnoDTO(actualizado);
     }
-
 }
-

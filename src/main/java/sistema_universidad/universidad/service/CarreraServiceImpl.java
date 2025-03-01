@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 public class CarreraServiceImpl implements CarreraService {
 
     private final CarreraRepository carreraRepository;
-    private  final MateriaRepository materiaRepository;
+    private final MateriaRepository materiaRepository;
 
     @Override
     public CarreraDTO crearCarrera(CrearCarreraDTO crearCarreraDTO) {
@@ -43,11 +43,12 @@ public class CarreraServiceImpl implements CarreraService {
         // Guardar la nueva carrera
         Carrera nuevaCarrera = carreraRepository.save(carrera);
 
-        return CarreraDTO.builder()
-                .id(nuevaCarrera.getId())
-                .nombre(nuevaCarrera.getNombre())
-                .duracion(nuevaCarrera.getDuracion())
-                .build();
+        // Crear y devolver el CarreraDTO de forma manual
+        return new CarreraDTO(
+                nuevaCarrera.getId(),
+                nuevaCarrera.getNombre(),
+                nuevaCarrera.getDuracion()
+        );
     }
 
     @Override
@@ -78,35 +79,33 @@ public class CarreraServiceImpl implements CarreraService {
         // Guardar los cambios
         Carrera carreraActualizada = carreraRepository.save(carreraExistente);
 
-        return CarreraDTO.builder()
-                .id(carreraActualizada.getId())
-                .nombre(carreraActualizada.getNombre())
-                .duracion(carreraActualizada.getDuracion())
-                .build();
+        // Crear y devolver el CarreraDTO de forma manual
+        return new CarreraDTO(
+                carreraActualizada.getId(),
+                carreraActualizada.getNombre(),
+                carreraActualizada.getDuracion()
+        );
     }
 
-
-
     @Override
-    public List<CarreraDTO> mostrarCarrera(){
+    public List<CarreraDTO> mostrarCarrera() {
         List<Carrera> carreras = carreraRepository.findAll();
         return carreras.stream()
-                .map(c -> CarreraDTO.builder()
-                        .id(c.getId())
-                        .nombre(c.getNombre())
-                        .duracion(c.getDuracion())
-                        .build())
+                .map(c -> new CarreraDTO(
+                        c.getId(),
+                        c.getNombre(),
+                        c.getDuracion()
+                ))
                 .collect(Collectors.toList());
     }
 
     @Override
-    public void eliminarCarrera(Integer id){
+    public void eliminarCarrera(Integer id) {
         carreraRepository.deleteById(id);
     }
 
     @Override
-    public Carrera buscarPorId(Integer id){
+    public Carrera buscarPorId(Integer id) {
         return carreraRepository.findById(id).orElse(null);
     }
-
 }
