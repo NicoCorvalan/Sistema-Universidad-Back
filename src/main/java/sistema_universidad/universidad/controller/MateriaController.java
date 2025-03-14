@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import org.springframework.web.server.ResponseStatusException;
 import sistema_universidad.universidad.dto.CrearMateriaDTO;
 import sistema_universidad.universidad.dto.MateriaDTO;
 import sistema_universidad.universidad.model.Materia;
@@ -53,14 +54,15 @@ public class MateriaController {
                     content = @Content)
     })
     @GetMapping("/{id}")
-    public ResponseEntity<MateriaDTO> buscarPorId(@Parameter(description = "id of subject to be searched") @PathVariable Long id) {
-        MateriaDTO materiaDTO = materiaService.buscarMateriaPorId(id);
-        if (materiaDTO != null) {
-            return ResponseEntity.ok(materiaDTO);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
+    public ResponseEntity<MateriaDTO> buscarPorId(
+            @Parameter(description = "ID de la materia a buscar") @PathVariable Long id) {
+
+        MateriaDTO materiaDTO = materiaService.buscarMateriaPorId(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Materia no encontrada"));
+
+        return ResponseEntity.ok(materiaDTO);
     }
+
 
     @Operation(summary = "Crear una nueva Materia")
     @ApiResponses(value = {
@@ -99,8 +101,16 @@ public class MateriaController {
                     content = @Content)
     })
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> eliminarMateria(@Parameter(description = "id of subject to be deleted") @PathVariable Long id) {
-        materiaService.eliminarMateria(id);
-        return new ResponseEntity<>("Materia eliminada con éxito", HttpStatus.OK);
+    public ResponseEntity<?> eliminarMateria(
+            @Parameter(description = "ID de la materia a eliminar") @PathVariable Long id) {
+
+        boolean eliminada = materiaService.eliminarMateria(id);
+
+        if (!eliminada) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Materia no encontrada");
+        }
+
+        return ResponseEntity.noContent().build(); // HTTP 204 - Sin contenido
     }
+
 }

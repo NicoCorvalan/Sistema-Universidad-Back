@@ -10,6 +10,7 @@ import sistema_universidad.universidad.repository.CarreraRepository;
 import sistema_universidad.universidad.repository.MateriaRepository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -69,17 +70,27 @@ public class MateriaServiceImpl implements MateriaService{
     }
 
     @Override
-    public MateriaDTO buscarMateriaPorId(Long id) {
-        Materia materia = materiaRepository.findById(id).orElse(null);
-        if (materia != null) {
-            return convertirAMateriaDTO(materia);
-        }
-        return null; // Si no se encuentra la materia, devuelve null
+    public Optional<MateriaDTO> buscarMateriaPorId(Long id) {
+        return materiaRepository.findById(id)
+                .map(this::convertirAMateriaDTO);
     }
 
     @Override
-    public void eliminarMateria(Long id){
-        materiaRepository.deleteById(id);
+    public boolean eliminarMateria(Long id) {
+        Optional<Materia> materiaOptional = materiaRepository.findById(id);
+
+        if (materiaOptional.isPresent()) {
+            Materia materia = materiaOptional.get();
+
+            // Limpiamos las relaciones para mantener la consistencia
+            materia.getCarreras().forEach(carrera -> carrera.getMaterias().remove(materia));
+            materia.getCarreras().clear();
+
+            materiaRepository.delete(materia);
+            return true;
+        }
+
+        return false; // No encontrada
     }
 
     @Override

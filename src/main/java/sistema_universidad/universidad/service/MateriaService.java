@@ -6,11 +6,12 @@ import sistema_universidad.universidad.dto.MateriaDTO;
 
 
 import java.util.List;
+import java.util.Optional;
 
 public interface MateriaService {
     List<MateriaDTO> mostrarMaterias();
     MateriaDTO crearMateria(CrearMateriaDTO crearMateriaDTO);
-    void eliminarMateria(Long id);
-    MateriaDTO buscarMateriaPorId(Long id);
+    boolean eliminarMateria(Long id);
+    Optional <MateriaDTO> buscarMateriaPorId(Long id);
     MateriaDTO editarMateria(Long id, CrearMateriaDTO crearMateriaDTO);
 }

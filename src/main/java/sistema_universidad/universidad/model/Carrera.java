@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -32,13 +33,12 @@ public class Carrera{
     private String nombre;
 
     @Column(name = "duracion")
-    @NotBlank(message = "La duracion no puede estar vacia")
-    @Size(min = 3, message = "La carrera debe durar como minimo 3 años")
+    @Min(value = 3, message = "La carrera debe durar como mínimo 3 años")
     private int duracion;
 
     @OneToMany(mappedBy = "carrera", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
-    private List<Alumno> alumnos;
+    private List<Alumno> alumnos = new ArrayList<>();
 
     @ManyToMany
     @JoinTable(
