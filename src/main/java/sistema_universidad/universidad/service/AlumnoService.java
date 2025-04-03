@@ -1,15 +1,14 @@
 package sistema_universidad.universidad.service;
 
-import sistema_universidad.universidad.dto.AlumnoDTO;
-import sistema_universidad.universidad.dto.CrearAlumnoDTO;
-import sistema_universidad.universidad.model.Alumno;
+import sistema_universidad.universidad.dto.ResponseAlumnoDTO;
+import sistema_universidad.universidad.dto.RequestAlumnoDTO;
 import java.util.List;
 
 public interface AlumnoService {
-    List<AlumnoDTO> mostrarAlumnos();
-    AlumnoDTO crearAlumno(CrearAlumnoDTO crearAlumnoDTO);
-    AlumnoDTO buscarAlumnoPorId(Long id);
-    AlumnoDTO editarAlumno(Long id,CrearAlumnoDTO crearAlumnoDTO);
+    List<ResponseAlumnoDTO> mostrarAlumnos();
+    ResponseAlumnoDTO crearAlumno(RequestAlumnoDTO crearAlumnoDTO);
+    ResponseAlumnoDTO buscarAlumnoPorId(Long id);
+    ResponseAlumnoDTO editarAlumno(Long id, RequestAlumnoDTO requestAlumnoDTO);
 }
 
 

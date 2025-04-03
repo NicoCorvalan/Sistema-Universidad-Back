@@ -28,12 +28,9 @@ public class Carrera{
     private Integer id;
 
     @Column(name = "nombre")
-    @NotBlank(message = "El nombre no puede estar vacío")
-    @Size(min = 3, max = 20, message = "El nombre debe tener entre 3 y 20 caracteres")
     private String nombre;
 
     @Column(name = "duracion")
-    @Min(value = 3, message = "La carrera debe durar como mínimo 3 años")
     private int duracion;
 
     @OneToMany(mappedBy = "carrera", cascade = CascadeType.ALL, orphanRemoval = true)

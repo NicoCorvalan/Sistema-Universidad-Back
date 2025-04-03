@@ -2,6 +2,7 @@ package sistema_universidad.universidad.controller;
 
 import java.util.List;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,8 +13,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import sistema_universidad.universidad.dto.AlumnoDTO;
-import sistema_universidad.universidad.dto.CrearAlumnoDTO;
+import sistema_universidad.universidad.dto.RequestAlumnoDTO;
+import sistema_universidad.universidad.dto.ResponseAlumnoDTO;
 import sistema_universidad.universidad.model.Alumno;
 import sistema_universidad.universidad.service.AlumnoServiceImpl;
 
@@ -39,7 +40,7 @@ public class AlumnoController {
                     schema = @Schema(implementation = Alumno.class)) })
     })
     @GetMapping
-    public List<AlumnoDTO> mostrarAlumnos() {
+    public List<ResponseAlumnoDTO> mostrarAlumnos() {
         return alumnoService.mostrarAlumnos();
     }
 
@@ -53,14 +54,17 @@ public class AlumnoController {
                     content = @Content)
     })
     @GetMapping("/{id}")
-    public ResponseEntity<AlumnoDTO> buscarPorId(@Parameter(description = "id of student to be searched")@PathVariable Long id) {
-        AlumnoDTO alumnoDTO = alumnoService.buscarAlumnoPorId(id);
-        if (alumnoDTO != null) {
-            return ResponseEntity.ok(alumnoDTO);
-        }else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+    public ResponseEntity<?> buscarPorId(@Parameter(description = "ID del alumno a buscar") @PathVariable Long id) {
+        ResponseAlumnoDTO responseAlumnoDTO = alumnoService.buscarAlumnoPorId(id);
+
+        if (responseAlumnoDTO != null) {
+            return ResponseEntity.ok(responseAlumnoDTO);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("El alumno con ID " + id + " no existe en la base de datos.");
         }
     }
+
 
     @Operation(summary = "Crear un nuevo Alumno")
     @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Student created successfully",
@@ -70,9 +74,9 @@ public class AlumnoController {
                     content = @Content)
     })
     @PostMapping()
-    public ResponseEntity<AlumnoDTO> crearAlumno(@RequestBody CrearAlumnoDTO crearAlumnoDTO) {
-        AlumnoDTO alumnoDTO = alumnoService.crearAlumno(crearAlumnoDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(alumnoDTO);
+    public ResponseEntity<ResponseAlumnoDTO> crearAlumno(@Valid @RequestBody RequestAlumnoDTO requestAlumnoDTO) {
+        ResponseAlumnoDTO responseAlumnoDTO = alumnoService.crearAlumno(requestAlumnoDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseAlumnoDTO);
     }
 
 
@@ -86,11 +90,11 @@ public class AlumnoController {
                     content = @Content)
     })
     @PutMapping("/{id}")
-    public ResponseEntity<?> editarAlumno(
+    public ResponseEntity<ResponseAlumnoDTO> editarAlumno(
             @PathVariable Long id,
-            @RequestBody CrearAlumnoDTO crearAlumnoDTO) {
+            @Valid @RequestBody RequestAlumnoDTO requestAlumnoDTO) {
 
-        AlumnoDTO alumnoActualizado = alumnoService.editarAlumno(id, crearAlumnoDTO);
+        ResponseAlumnoDTO alumnoActualizado = alumnoService.editarAlumno(id, requestAlumnoDTO);
         return new ResponseEntity<>(alumnoActualizado, HttpStatus.OK);
     }
 

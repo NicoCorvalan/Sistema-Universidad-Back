@@ -2,12 +2,14 @@ package sistema_universidad.universidad.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import sistema_universidad.universidad.dto.CrearMateriaDTO;
-import sistema_universidad.universidad.dto.MateriaDTO;
+import sistema_universidad.universidad.dto.RequestMateriaDTO;
+import sistema_universidad.universidad.dto.ResponseMateriaDTO;
 import sistema_universidad.universidad.model.Carrera;
 import sistema_universidad.universidad.model.Materia;
 import sistema_universidad.universidad.repository.CarreraRepository;
 import sistema_universidad.universidad.repository.MateriaRepository;
+import org.springframework.transaction.annotation.Transactional;
+
 
 import java.util.List;
 import java.util.Optional;
@@ -21,20 +23,28 @@ public class MateriaServiceImpl implements MateriaService{
     private final CarreraRepository carreraRepository;
 
     @Override
-    public MateriaDTO crearMateria(CrearMateriaDTO crearMateriaDTO) {
+    @Transactional
+    public ResponseMateriaDTO crearMateria(RequestMateriaDTO requestMateriaDTO) {
+
+        // Verificar si ya existe una materia con el mismo nombre
+        Optional<Materia> materiaExistente = materiaRepository.findByNombre(requestMateriaDTO.getNombre());
+        if (materiaExistente.isPresent()) {
+            throw new RuntimeException("Ya existe una materia con el nombre: " + requestMateriaDTO.getNombre());
+        }
+
         // Buscar todas las carreras relacionadas por sus IDs
-        List<Carrera> carreras = carreraRepository.findAllById(crearMateriaDTO.getCarreraIds());
+        List<Carrera> carreras = carreraRepository.findAllById(requestMateriaDTO.getCarreraIds());
 
         // Validar que se encontraron todas las carreras
-        if (carreras.size() != crearMateriaDTO.getCarreraIds().size()) {
+        if (carreras.size() != requestMateriaDTO.getCarreraIds().size()) {
             throw new RuntimeException("Una o más carreras no fueron encontradas");
         }
 
         // Crear la materia
         Materia materia = new Materia();
-        materia.setNombre(crearMateriaDTO.getNombre());
-        materia.setHorasCursado(crearMateriaDTO.getHorasCursado());
-        materia.setDuracion(crearMateriaDTO.getDuracion());
+        materia.setNombre(requestMateriaDTO.getNombre());
+        materia.setHorasCursado(requestMateriaDTO.getHorasCursado());
+        materia.setDuracion(requestMateriaDTO.getDuracion());
 
         // Establecer las relaciones entre la materia y las carreras
         for (Carrera carrera : carreras) {
@@ -49,12 +59,12 @@ public class MateriaServiceImpl implements MateriaService{
     }
 
 
-    private MateriaDTO convertirAMateriaDTO(Materia materia) {
+    private ResponseMateriaDTO convertirAMateriaDTO(Materia materia) {
         List<String> nombresCarreras = materia.getCarreras().stream()
                 .map(Carrera::getNombre)
                 .collect(Collectors.toList());
 
-        return MateriaDTO.builder()
+        return ResponseMateriaDTO.builder()
                 .id(materia.getId())
                 .nombre(materia.getNombre())
                 .carrera(nombresCarreras)
@@ -64,18 +74,21 @@ public class MateriaServiceImpl implements MateriaService{
     }
 
     @Override
-    public List<MateriaDTO> mostrarMaterias(){
+    @Transactional(readOnly = true)
+    public List<ResponseMateriaDTO> mostrarMaterias(){
         List<Materia> materias = materiaRepository.findAll();
         return materias.stream().map(this::convertirAMateriaDTO).collect(Collectors.toList());
     }
 
     @Override
-    public Optional<MateriaDTO> buscarMateriaPorId(Long id) {
+    @Transactional(readOnly = true)
+    public Optional<ResponseMateriaDTO> buscarMateriaPorId(Long id) {
         return materiaRepository.findById(id)
                 .map(this::convertirAMateriaDTO);
     }
 
     @Override
+    @Transactional
     public boolean eliminarMateria(Long id) {
         Optional<Materia> materiaOptional = materiaRepository.findById(id);
 
@@ -94,20 +107,21 @@ public class MateriaServiceImpl implements MateriaService{
     }
 
     @Override
-    public MateriaDTO editarMateria(Long id, CrearMateriaDTO crearMateriaDTO) {
+    @Transactional
+    public ResponseMateriaDTO editarMateria(Long id, RequestMateriaDTO requestMateriaDTO) {
         Materia materiaExistente = materiaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Materia no encontrada"));
 
         // Actualizar campos básicos
-        materiaExistente.setNombre(crearMateriaDTO.getNombre());
-        materiaExistente.setHorasCursado(crearMateriaDTO.getHorasCursado());
-        materiaExistente.setDuracion(crearMateriaDTO.getDuracion());
+        materiaExistente.setNombre(requestMateriaDTO.getNombre());
+        materiaExistente.setHorasCursado(requestMateriaDTO.getHorasCursado());
+        materiaExistente.setDuracion(requestMateriaDTO.getDuracion());
 
         // Actualizar carreras asociadas
-        if (crearMateriaDTO.getCarreraIds() != null && !crearMateriaDTO.getCarreraIds().isEmpty()) {
+        if (requestMateriaDTO.getCarreraIds() != null && !requestMateriaDTO.getCarreraIds().isEmpty()) {
             // Obtener las nuevas carreras por ID
-            List<Carrera> nuevasCarreras = carreraRepository.findAllById(crearMateriaDTO.getCarreraIds());
-            if (nuevasCarreras.size() != crearMateriaDTO.getCarreraIds().size()) {
+            List<Carrera> nuevasCarreras = carreraRepository.findAllById(requestMateriaDTO.getCarreraIds());
+            if (nuevasCarreras.size() != requestMateriaDTO.getCarreraIds().size()) {
                 throw new RuntimeException("Una o más carreras no fueron encontradas");
             }
 

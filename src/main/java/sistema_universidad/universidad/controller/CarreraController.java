@@ -1,12 +1,13 @@
 package sistema_universidad.universidad.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-import sistema_universidad.universidad.dto.CarreraDTO;
-import sistema_universidad.universidad.dto.CrearCarreraDTO;
+import sistema_universidad.universidad.dto.RequestCarreraDTO;
+import sistema_universidad.universidad.dto.ResponseCarreraDTO;
 import sistema_universidad.universidad.model.Carrera;
 import sistema_universidad.universidad.service.CarreraService;
 
@@ -33,24 +34,24 @@ public class CarreraController {
                     schema = @Schema(implementation = Carrera.class))})
     })
     @GetMapping
-    public List<CarreraDTO> mostrarCarrera() {
+    public List<ResponseCarreraDTO> mostrarCarrera() {
         return carreraService.mostrarCarrera();
     }
 
     @Operation(summary = "Mostrar Carrera segun el ID")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Found the career",
             content = {@Content(mediaType = "application/json",
-                    schema = @Schema(implementation = Carrera.class))}),
+                    schema = @Schema(implementation = ResponseCarreraDTO.class))}),
             @ApiResponse(responseCode = "400", description = "Invalid id supplied",
                     content = @Content),
             @ApiResponse(responseCode = "404", description = "Career not found",
                     content = @Content)
     })
     @GetMapping("/{id}")
-    public CarreraDTO buscarPorId(@Parameter(description = "id of career to be searched") @PathVariable Integer id) {
+    public ResponseCarreraDTO buscarPorId(@Parameter(description = "id of career to be searched") @PathVariable Integer id) {
         try {
             Carrera carrera = carreraService.buscarPorId(id);
-            return new CarreraDTO(carrera.getId(), carrera.getNombre(), carrera.getDuracion());
+            return new ResponseCarreraDTO(carrera.getId(), carrera.getNombre(), carrera.getDuracion());
         } catch (RuntimeException e) { // Captura la excepción lanzada en el servicio
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Carrera no encontrada");
         }
@@ -64,11 +65,10 @@ public class CarreraController {
                     content = @Content)
     })
     @PostMapping
-    public ResponseEntity<String> crearCarrera(@RequestBody CrearCarreraDTO crearCarreraDTO) {
+    public ResponseEntity<ResponseCarreraDTO> crearCarrera(@Valid @RequestBody RequestCarreraDTO requestCarreraDTO) {
         // Llamar al servicio con el DTO directamente
-        carreraService.crearCarrera(crearCarreraDTO);
-
-        return new ResponseEntity<>("Carrera creada exitosamente", HttpStatus.CREATED);
+        ResponseCarreraDTO responseCarreraDTO = carreraService.crearCarrera(requestCarreraDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseCarreraDTO);
     }
 
 
@@ -82,16 +82,11 @@ public class CarreraController {
                     content = @Content)
     })
     @PutMapping("/{id}")
-    public ResponseEntity<String> editarCarrera(@PathVariable Integer id, @RequestBody CrearCarreraDTO crearCarreraDTO) {
+    public ResponseEntity<ResponseCarreraDTO> editarCarrera(@PathVariable Integer id,@Valid @RequestBody RequestCarreraDTO requestCarreraDTO) {
         // Buscar la carrera existente
-        Carrera carreraExistente = carreraService.buscarPorId(id);
-        if (carreraExistente != null) {
-            // Pasar el DTO al servicio para actualizar la carrera
-            carreraService.editarCarrera(id, crearCarreraDTO);
-            return new ResponseEntity<>("Carrera modificada exitosamente", HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>("Carrera no encontrada", HttpStatus.NOT_FOUND);
-        }
+        ResponseCarreraDTO responseCarreraDTO = carreraService.editarCarrera(id, requestCarreraDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(responseCarreraDTO);
+
     }
     @Operation(summary = "Eliminar una Carrera segun el ID")
     @ApiResponses(value = {
@@ -104,7 +99,11 @@ public class CarreraController {
     })
     @DeleteMapping("/{id}")
     public ResponseEntity<?> eliminarCarrera(@Parameter(description = "id of career to be deleted") @PathVariable Integer id) {
-        carreraService.eliminarCarrera(id);
-        return new ResponseEntity<>("Carrera eliminada exitosamente", HttpStatus.OK);
+        try {
+            carreraService.eliminarCarrera(id);
+            return new ResponseEntity<>("Carrera eliminada exitosamente", HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>("Carrera no encontrada", HttpStatus.NOT_FOUND);
+        }
     }
 }

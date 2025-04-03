@@ -2,8 +2,9 @@ package sistema_universidad.universidad.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import sistema_universidad.universidad.dto.AlumnoDTO;
-import sistema_universidad.universidad.dto.CrearAlumnoDTO;
+import org.springframework.transaction.annotation.Transactional;
+import sistema_universidad.universidad.dto.RequestAlumnoDTO;
+import sistema_universidad.universidad.dto.ResponseAlumnoDTO;
 import sistema_universidad.universidad.model.Alumno;
 import sistema_universidad.universidad.model.Carrera;
 import sistema_universidad.universidad.repository.AlumnoRepository;
@@ -22,20 +23,27 @@ public class AlumnoServiceImpl implements AlumnoService {
     private final AlumnoMapper alumnoMapper;  // Inyectamos el Mapper
 
     @Override
-    public AlumnoDTO crearAlumno(CrearAlumnoDTO crearAlumnoDTO) {
+    @Transactional
+    public ResponseAlumnoDTO crearAlumno(RequestAlumnoDTO requestAlumnoDTO) {
+
+        // Verifica si ya existe un alumno con el mismo DNI
+        if (alumnoRepository.existsByDni(requestAlumnoDTO.getDni())) {
+            throw new RuntimeException("Ya existe un alumno con el DNI " + requestAlumnoDTO.getDni());
+        }
+
         // Buscar carrera por ID
-        Carrera carrera = carreraRepository.findById(crearAlumnoDTO.getCarreraId())
+        Carrera carrera = carreraRepository.findById(requestAlumnoDTO.getCarreraId())
                 .orElseThrow(() -> new RuntimeException("Carrera no encontrada"));
 
         // Crear un nuevo objeto Alumno
         Alumno alumno = new Alumno();
-        alumno.setNombre(crearAlumnoDTO.getNombre());
-        alumno.setApellido(crearAlumnoDTO.getApellido());
-        alumno.setDni(crearAlumnoDTO.getDni());
+        alumno.setNombre(requestAlumnoDTO.getNombre());
+        alumno.setApellido(requestAlumnoDTO.getApellido());
+        alumno.setDni(requestAlumnoDTO.getDni());
         alumno.setCarrera(carrera);
-        alumno.setTelefono(crearAlumnoDTO.getTelefono());
-        alumno.setNumeroLegajo(crearAlumnoDTO.getNumeroLegajo());
-        alumno.setEstado(crearAlumnoDTO.getEstado());
+        alumno.setTelefono(requestAlumnoDTO.getTelefono());
+        alumno.setNumeroLegajo(requestAlumnoDTO.getNumeroLegajo());
+        alumno.setEstado(requestAlumnoDTO.getEstado());
 
         // Guardar el nuevo alumno en la base de datos
         Alumno nuevoAlumno = alumnoRepository.save(alumno);
@@ -45,14 +53,16 @@ public class AlumnoServiceImpl implements AlumnoService {
     }
 
     @Override
-    public List<AlumnoDTO> mostrarAlumnos() {
+    @Transactional(readOnly = true)
+    public List<ResponseAlumnoDTO> mostrarAlumnos() {
         return alumnoRepository.findAll().stream()
                 .map(alumnoMapper::alumnoToAlumnoDTO)  // Usamos el Mapper
                 .collect(Collectors.toList());
     }
 
     @Override
-    public AlumnoDTO buscarAlumnoPorId(Long id) {
+    @Transactional(readOnly = true)
+    public ResponseAlumnoDTO buscarAlumnoPorId(Long id) {
         Alumno alumno = alumnoRepository.findById(id).orElse(null);
         if (alumno != null) {
             return alumnoMapper.alumnoToAlumnoDTO(alumno);  // Usamos el Mapper
@@ -62,21 +72,22 @@ public class AlumnoServiceImpl implements AlumnoService {
     }
 
     @Override
-    public AlumnoDTO editarAlumno(Long id, CrearAlumnoDTO crearAlumnoDTO) {
+    @Transactional
+    public ResponseAlumnoDTO editarAlumno(Long id, RequestAlumnoDTO requestAlumnoDTO) {
         Alumno alumnoExistente = alumnoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Alumno no encontrado"));
 
         // Actualizamos los campos del alumno
-        alumnoExistente.setNombre(crearAlumnoDTO.getNombre());
-        alumnoExistente.setApellido(crearAlumnoDTO.getApellido());
-        alumnoExistente.setDni(crearAlumnoDTO.getDni());
-        alumnoExistente.setTelefono(crearAlumnoDTO.getTelefono());
-        alumnoExistente.setNumeroLegajo(crearAlumnoDTO.getNumeroLegajo());
-        alumnoExistente.setEstado(crearAlumnoDTO.getEstado());
+        alumnoExistente.setNombre(requestAlumnoDTO.getNombre());
+        alumnoExistente.setApellido(requestAlumnoDTO.getApellido());
+        alumnoExistente.setDni(requestAlumnoDTO.getDni());
+        alumnoExistente.setTelefono(requestAlumnoDTO.getTelefono());
+        alumnoExistente.setNumeroLegajo(requestAlumnoDTO.getNumeroLegajo());
+        alumnoExistente.setEstado(requestAlumnoDTO.getEstado());
 
         // Actualizar carrera si se especificó
-        if (crearAlumnoDTO.getCarreraId() != null) {
-            Carrera carrera = carreraRepository.findById(crearAlumnoDTO.getCarreraId())
+        if (requestAlumnoDTO.getCarreraId() != null) {
+            Carrera carrera = carreraRepository.findById(requestAlumnoDTO.getCarreraId())
                     .orElseThrow(() -> new RuntimeException("Carrera no encontrada"));
             alumnoExistente.setCarrera(carrera);
         }

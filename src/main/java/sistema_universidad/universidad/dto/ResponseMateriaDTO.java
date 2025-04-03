@@ -1,17 +1,17 @@
 package sistema_universidad.universidad.dto;
 
-import lombok.*;
+import lombok.Builder;
+import lombok.Data;
 import sistema_universidad.universidad.enums.Duracion;
-
 import java.util.List;
 
-@Data
 @Builder
-public class CrearMateriaDTO {
+@Data
+public class ResponseMateriaDTO {
 
+    private Long id;
     private String nombre;
-    private List<Integer> carreraIds;
-    private int horasCursado;
+    private List<String> carrera;
     private Duracion duracion;
-
+    private int horasCursado;
 }

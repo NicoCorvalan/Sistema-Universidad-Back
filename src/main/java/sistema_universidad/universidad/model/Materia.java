@@ -29,7 +29,6 @@ public class Materia {
     private Long id;
 
     @Column(name = "nombre", nullable = false)
-    @NotBlank(message = "El nombre no puede estar vacio")
     private String nombre;
 
     @ManyToMany(mappedBy = "materias")
@@ -37,11 +36,9 @@ public class Materia {
     private List<Carrera> carreras = new ArrayList<>();
 
     @Column(name = "horas_cursado")
-    @Min(value = 1, message = "Las horas de cursado deben ser mayores a 0")
     private int horasCursado;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "duracion")
-    @NotNull(message = "La duración es obligatoria")
     private Duracion duracion;
 }

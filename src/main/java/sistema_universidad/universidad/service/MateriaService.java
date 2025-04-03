@@ -1,17 +1,17 @@
 package sistema_universidad.universidad.service;
 
 
-import sistema_universidad.universidad.dto.CrearMateriaDTO;
-import sistema_universidad.universidad.dto.MateriaDTO;
+import sistema_universidad.universidad.dto.RequestMateriaDTO;
+import sistema_universidad.universidad.dto.ResponseMateriaDTO;
 
 
 import java.util.List;
 import java.util.Optional;
 
 public interface MateriaService {
-    List<MateriaDTO> mostrarMaterias();
-    MateriaDTO crearMateria(CrearMateriaDTO crearMateriaDTO);
+    List<ResponseMateriaDTO> mostrarMaterias();
+    ResponseMateriaDTO crearMateria(RequestMateriaDTO requestMateriaDTO);
     boolean eliminarMateria(Long id);
-    Optional <MateriaDTO> buscarMateriaPorId(Long id);
-    MateriaDTO editarMateria(Long id, CrearMateriaDTO crearMateriaDTO);
+    Optional <ResponseMateriaDTO> buscarMateriaPorId(Long id);
+    ResponseMateriaDTO editarMateria(Long id, RequestMateriaDTO requestMateriaDTO);
 }

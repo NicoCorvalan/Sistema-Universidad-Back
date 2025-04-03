@@ -2,14 +2,17 @@ package sistema_universidad.universidad.service;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import sistema_universidad.universidad.dto.CarreraDTO;
-import sistema_universidad.universidad.dto.CrearCarreraDTO;
+import org.springframework.transaction.annotation.Transactional;
+import sistema_universidad.universidad.dto.RequestCarreraDTO;
+import sistema_universidad.universidad.dto.ResponseCarreraDTO;
 import sistema_universidad.universidad.model.Carrera;
 import sistema_universidad.universidad.model.Materia;
 import sistema_universidad.universidad.repository.CarreraRepository;
 import sistema_universidad.universidad.repository.MateriaRepository;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
@@ -20,19 +23,26 @@ public class CarreraServiceImpl implements CarreraService {
     private final MateriaRepository materiaRepository;
 
     @Override
-    public CarreraDTO crearCarrera(CrearCarreraDTO crearCarreraDTO) {
-        // Buscar todas las materias relacionadas por sus IDs
-        List<Materia> materias = materiaRepository.findAllById(crearCarreraDTO.getMateriasIds());
-
-        // Validar que se encontraron todas las materias
-        if (materias.size() != crearCarreraDTO.getMateriasIds().size()) {
-            throw new RuntimeException("Una o más materias no fueron encontradas");
+    @Transactional
+    public ResponseCarreraDTO crearCarrera(RequestCarreraDTO requestCarreraDTO) {
+        // Verificar si ya existe una carrera con el mismo nombre
+        Optional<Carrera> carreraExistente = carreraRepository.findByNombre(requestCarreraDTO.getNombre());
+        if (carreraExistente.isPresent()) {
+            throw new RuntimeException("Ya existe una carrera con el nombre: " + requestCarreraDTO.getNombre());
         }
+
+        // Si materiasIds es null, usamos una lista vacía
+        List<Materia> materias = (requestCarreraDTO.getMateriasIds() != null)
+                ? requestCarreraDTO.getMateriasIds().stream()
+                .map(id -> materiaRepository.findById(id)
+                        .orElseThrow(() -> new RuntimeException("Materia con ID " + id + " no encontrada")))
+                .toList()
+                : Collections.emptyList();
 
         // Crear la carrera
         Carrera carrera = new Carrera();
-        carrera.setNombre(crearCarreraDTO.getNombre());
-        carrera.setDuracion(crearCarreraDTO.getDuracion());
+        carrera.setNombre(requestCarreraDTO.getNombre());
+        carrera.setDuracion(requestCarreraDTO.getDuracion());
 
         // Establecer las relaciones entre la carrera y las materias
         for (Materia materia : materias) {
@@ -44,28 +54,32 @@ public class CarreraServiceImpl implements CarreraService {
         Carrera nuevaCarrera = carreraRepository.save(carrera);
 
         // Crear y devolver el CarreraDTO de forma manual
-        return new CarreraDTO(
+        return new ResponseCarreraDTO(
                 nuevaCarrera.getId(),
                 nuevaCarrera.getNombre(),
                 nuevaCarrera.getDuracion()
         );
     }
 
+
     @Override
-    public CarreraDTO editarCarrera(Integer id, CrearCarreraDTO crearCarreraDTO) {
+    @Transactional
+    public ResponseCarreraDTO editarCarrera(Integer id, RequestCarreraDTO requestCarreraDTO) {
         Carrera carreraExistente = carreraRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Carrera no encontrada"));
 
         // Actualizar campos básicos
-        carreraExistente.setNombre(crearCarreraDTO.getNombre());
-        carreraExistente.setDuracion(crearCarreraDTO.getDuracion());
+        carreraExistente.setNombre(requestCarreraDTO.getNombre());
+        carreraExistente.setDuracion(requestCarreraDTO.getDuracion());
 
         // Actualizar las materias asociadas
-        if (crearCarreraDTO.getMateriasIds() != null && !crearCarreraDTO.getMateriasIds().isEmpty()) {
-            List<Materia> nuevasMaterias = materiaRepository.findAllById(crearCarreraDTO.getMateriasIds());
-            if (nuevasMaterias.size() != crearCarreraDTO.getMateriasIds().size()) {
-                throw new RuntimeException("Una o más materias no fueron encontradas");
-            }
+        if (requestCarreraDTO.getMateriasIds() != null && !requestCarreraDTO.getMateriasIds().isEmpty()) {
+            // Obtener las nuevas materias validando individualmente
+            List<Materia> nuevasMaterias = requestCarreraDTO.getMateriasIds().stream()
+                    .map(materiaId -> materiaRepository.findById(materiaId)
+                            .orElseThrow(() -> new RuntimeException("Materia con ID " + materiaId + " no encontrada")))
+                    .toList();
+
 
             // Limpiar relaciones existentes
             carreraExistente.getMaterias().forEach(materia -> materia.getCarreras().remove(carreraExistente));
@@ -80,7 +94,7 @@ public class CarreraServiceImpl implements CarreraService {
         Carrera carreraActualizada = carreraRepository.save(carreraExistente);
 
         // Crear y devolver el CarreraDTO de forma manual
-        return new CarreraDTO(
+        return new ResponseCarreraDTO(
                 carreraActualizada.getId(),
                 carreraActualizada.getNombre(),
                 carreraActualizada.getDuracion()
@@ -88,10 +102,11 @@ public class CarreraServiceImpl implements CarreraService {
     }
 
     @Override
-    public List<CarreraDTO> mostrarCarrera() {
+    @Transactional(readOnly = true)
+    public List<ResponseCarreraDTO> mostrarCarrera() {
         List<Carrera> carreras = carreraRepository.findAll();
         return carreras.stream()
-                .map(c -> new CarreraDTO(
+                .map(c -> new ResponseCarreraDTO(
                         c.getId(),
                         c.getNombre(),
                         c.getDuracion()
@@ -100,11 +115,13 @@ public class CarreraServiceImpl implements CarreraService {
     }
 
     @Override
+    @Transactional
     public void eliminarCarrera(Integer id) {
         carreraRepository.deleteById(id);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Carrera buscarPorId(Integer id) {
         return carreraRepository.findById(id).orElse(null);
     }
